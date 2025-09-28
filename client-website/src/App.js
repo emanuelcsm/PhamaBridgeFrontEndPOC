@@ -7,6 +7,8 @@ import SecurityPage from "./pages/SecurityPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import UserRegisterPage from './pages/UserRegisterPage';
+import PharmacyRegisterPage from './pages/PharmacyRegisterPage';
 import "./App.css";
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
             </Route>
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/register-user" element={<UserRegisterPage />} />
+            <Route path="/register-pharmacy" element={<PharmacyRegisterPage />} />
 
             {/* Rotas protegidas */}
             <Route path="/" element={<ProtectedRoute requiresAuth={true} />}>

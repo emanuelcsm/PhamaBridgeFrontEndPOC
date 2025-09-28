@@ -35,7 +35,9 @@ const LoginPage = () => {
       <div className="login-form-wrapper">
         <img src={logo} alt="Logo PharmaBridge" className="login-logo" />
         <h2>Bem-vindo de Volta</h2>
+        
         {error && <div className="error-message">{error}</div>}
+        
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
             <label htmlFor="username">Usuário</label>
@@ -46,8 +48,10 @@ const LoginPage = () => {
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Digite seu nome de usuário"
               required
+              autoComplete="username"
             />
           </div>
+          
           <div className="form-group">
             <label htmlFor="password">Senha</label>
             <input
@@ -57,8 +61,10 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Digite sua senha"
               required
+              autoComplete="current-password"
             />
           </div>
+          
           <button
             type="submit"
             className="login-button"
@@ -67,8 +73,21 @@ const LoginPage = () => {
             {isLoading ? "Entrando..." : "Entrar"}
           </button>
         </form>
+        
         <div className="forgot-password-link">
           <Link to="/forgot-password">Esqueci minha senha</Link>
+        </div>
+        
+        <div className="register-options">
+          <p>Não possui uma conta?</p>
+          <div className="register-buttons">
+            <Link to="/register-user" className="register-button user-button">
+              Cadastrar como Usuário
+            </Link>
+            <Link to="/register-pharmacy" className="register-button pharmacy-button">
+              Cadastrar como Farmácia
+            </Link>
+          </div>
         </div>
       </div>
     </div>
