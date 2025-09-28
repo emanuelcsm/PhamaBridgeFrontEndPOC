@@ -1,60 +1,71 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
-import { loginRequest } from "../services/authService";
+import "./LoginPage.css"; // Make sure to create this CSS file
 
-function LoginPage() {
+const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
+
     try {
-      await loginRequest(username, password);
-      login();
-      navigate("/");
+      await login(username, password);
+      navigate("/"); // Redirect to home page after successful login
     } catch (err) {
-      setError("Usuário ou senha inválidos");
+      setError(
+        err.response?.data?.message ||
+          "Failed to login. Please check your credentials."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "60px auto", padding: 24, border: "1px solid #ccc", borderRadius: 8 }}>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 16 }}>
-          <label>Usuário:</label>
-          <input
-            type="text"
-            placeholder="Usuário"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
-          />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label>Senha:</label>
-          <input
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
-          />
-        </div>
-        <button type="submit" style={{ width: "100%", padding: 10 }}>
-          Entrar
-        </button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-      </form>
+    <div className="login-container">
+      <div className="login-form-wrapper">
+        <h2>Login to PharmaBridge</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="login-button"
+            disabled={isLoading}
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

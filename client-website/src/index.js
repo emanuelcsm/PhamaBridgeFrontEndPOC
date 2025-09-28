@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from "./AuthContext";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+console.log("API URL:", process.env.REACT_APP_API_URL);
 root.render(
   <React.StrictMode>
     <AuthProvider>
