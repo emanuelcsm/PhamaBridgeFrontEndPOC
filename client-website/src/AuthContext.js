@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import authService from "./services/authService";
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import authService from './services/authService';
 
 const AuthContext = createContext(null);
 
@@ -7,13 +7,26 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Check authentication status on initial load
   useEffect(() => {
-    // Check if user is already logged in
-    const userData = authService.getUserData();
-    if (userData) {
-      setUser(userData);
-    }
-    setLoading(false);
+    const checkAuth = () => {
+      try {
+        if (authService.isAuthenticated()) {
+          const userData = authService.getUserData();
+          if (userData) {
+            setUser(userData);
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        // Clear any invalid auth data
+        authService.logout();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   const login = async (username, password) => {
@@ -25,7 +38,7 @@ export function AuthProvider({ children }) {
         email: userData.email,
         firstName: userData.firstName,
         lastName: userData.lastName,
-        roles: userData.roles,
+        roles: userData.roles
       });
       return userData;
     } catch (error) {
@@ -39,7 +52,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
