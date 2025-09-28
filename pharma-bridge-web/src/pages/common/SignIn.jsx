@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
 import styled from 'styled-components';
-import { Card, Button, Input, Typography, Alert, LogoImage } from '../../components/common';
+import { Card, Button, Input, Typography, Alert, LogoImage, RegisterTypeModal } from '../../components/common';
 
 // Styled Components
 const SignInContainer = styled.div`
@@ -43,10 +43,27 @@ const SignIn = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Verifica se há uma mensagem de sucesso de registro na navegação
+  useEffect(() => {
+    if (location.state && location.state.message) {
+      setSuccess(location.state.message);
+      
+      // Limpa o estado após alguns segundos
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -95,6 +112,12 @@ const SignIn = () => {
             Acesse sua conta para gerenciar seus medicamentos e receitas
           </Typography>
           
+          {success && (
+            <Alert variant="success" title="Sucesso" onClose={() => setSuccess('')}>
+              {success}
+            </Alert>
+          )}
+          
           {error && (
             <Alert variant="error" title="Erro" onClose={() => setError('')}>
               {error}
@@ -136,12 +159,20 @@ const SignIn = () => {
                 Esqueceu a senha?
               </Typography>
             </Link>
-            <Link to="/register-user">
-              <Typography variant="body2" color="primary">
-                Criar nova conta
-              </Typography>
-            </Link>
+            <Typography 
+              variant="body2" 
+              color="primary" 
+              style={{ cursor: 'pointer' }}
+              onClick={() => setIsRegisterModalOpen(true)}
+            >
+              Criar nova conta
+            </Typography>
           </ActionLinks>
+          
+          <RegisterTypeModal
+            isOpen={isRegisterModalOpen}
+            onClose={() => setIsRegisterModalOpen(false)}
+          />
         </Card.Content>
       </SignInCard>
     </SignInContainer>

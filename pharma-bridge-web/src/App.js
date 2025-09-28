@@ -9,6 +9,8 @@ import SignIn from './pages/common/SignIn';
 import SecurityPage from './pages/common/SecurityPage';
 import MainPageUser from './pages/customer/MainPageUser';
 import MainPagePharmacy from './pages/pharmacy/MainPagePharmacy';
+import RegisterPharmacyPage from './pages/pharmacy/RegisterPharmacyPage';
+import RegisterCustomerPage from './pages/customer/RegisterCustomerPage';
 
 function App() {
   return (
@@ -36,6 +38,10 @@ function App() {
               <Route index element={<SecurityPage />} />
             </Route>
 
+            {/* Rotas de registro */}
+            <Route path="/register/pharmacy" element={<RegisterPharmacyPage />} />
+            <Route path="/register/customer" element={<RegisterCustomerPage />} />
+            
             {/* Rota padrão - redireciona para signin */}
             <Route path="/" element={<Navigate to="/signin" replace />} />
             

@@ -11,6 +11,7 @@ import Typography from './Typography';
 import { Modal, Modal2 } from './Modal';
 import UserAvatar from './UserAvatar';
 import LogoImage from './LogoImage';
+import RegisterTypeModal from './RegisterTypeModal';
 
 export {
   Button,
@@ -23,5 +24,6 @@ export {
   Modal,
   Modal2,
   UserAvatar,
-  LogoImage
+  LogoImage,
+  RegisterTypeModal
 };
