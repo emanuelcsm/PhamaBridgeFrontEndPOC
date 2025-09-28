@@ -9,7 +9,8 @@ import {
   Badge,
   Grid,
   Typography,
-  Modal
+  Modal,
+  LogoImage
 } from '../common';
 
 const ExampleContainer = styled.div`
@@ -35,7 +36,10 @@ const StyledComponentsExample = () => {
 
   return (
     <ExampleContainer>
-      <Typography variant="h1">PharmaBridge UI Components</Typography>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        <LogoImage size="60px" />
+        <Typography variant="h1">UI Components</Typography>
+      </div>
       <Typography variant="subtitle1">
         Esta é uma demonstração dos componentes estilizados disponíveis para uso na aplicação PharmaBridge.
       </Typography>
@@ -199,8 +203,8 @@ const StyledComponentsExample = () => {
 
         <ComponentRow>
           <Card fullWidth clickable>
-            <Card.Media>
-              <img src="/logo512.png" alt="PharmaBridge Logo" />
+            <Card.Media style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem' }}>
+              <LogoImage size="120px" />
             </Card.Media>
             <Card.Content>
               <Typography variant="h3">Card com Mídia</Typography>

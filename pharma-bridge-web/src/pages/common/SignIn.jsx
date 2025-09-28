@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
 import styled from 'styled-components';
-import { Card, Button, Input, Typography, Alert } from '../../components/common';
+import { Card, Button, Input, Typography, Alert, LogoImage } from '../../components/common';
 
 // Styled Components
 const SignInContainer = styled.div`
@@ -25,10 +25,7 @@ const LogoContainer = styled.div`
   margin-bottom: ${props => props.theme.spacing.xl};
 `;
 
-const Logo = styled.img`
-  max-width: 200px;
-  height: auto;
-`;
+// Removido e substituído pelo componente LogoImage
 
 const FormContainer = styled.form`
   display: flex;
@@ -87,7 +84,7 @@ const SignIn = () => {
       <SignInCard elevation={3}>
         <Card.Content>
           <LogoContainer>
-            <Logo src="/logoPharmaBridge.jpg" alt="PharmaBridge Logo" />
+            <LogoImage size="120px" />
           </LogoContainer>
           
           <Typography variant="h2" align="center" gutterBottom>

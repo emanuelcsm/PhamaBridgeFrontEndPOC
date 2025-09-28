@@ -10,6 +10,7 @@ import Grid from './Grid';
 import Typography from './Typography';
 import { Modal, Modal2 } from './Modal';
 import UserAvatar from './UserAvatar';
+import LogoImage from './LogoImage';
 
 export {
   Button,
@@ -21,5 +22,6 @@ export {
   Typography,
   Modal,
   Modal2,
-  UserAvatar
+  UserAvatar,
+  LogoImage
 };

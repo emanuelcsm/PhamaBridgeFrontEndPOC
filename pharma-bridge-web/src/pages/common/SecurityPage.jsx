@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
-import { Typography, Button, Card, Input, Alert, UserAvatar } from '../../components/common';
+import { Typography, Button, Card, Input, Alert, UserAvatar, LogoImage } from '../../components/common';
 
 // Styled Components
 const PageContainer = styled.div`
@@ -136,7 +136,9 @@ const SecurityPage = () => {
     <PageContainer>
       <Header>
         <HeaderContent>
-          <Logo onClick={goBackToHome}>PharmaBridge</Logo>
+          <Logo>
+            <LogoImage size="40px" clickable onClick={goBackToHome} />
+          </Logo>
           <UserInfo>
             <Typography variant="body1">
               {user?.roles?.includes('Customer') 

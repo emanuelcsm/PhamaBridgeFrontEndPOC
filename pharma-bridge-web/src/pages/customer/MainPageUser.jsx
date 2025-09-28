@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../../AuthContext';
-import { Typography, Button, Card, Grid, UserAvatar } from '../../components/common';
+import { Typography, Button, Card, Grid, UserAvatar, LogoImage } from '../../components/common';
 
 // Styled Components
 const PageContainer = styled.div`
@@ -24,10 +24,7 @@ const HeaderContent = styled.div`
   margin: 0 auto;
 `;
 
-const Logo = styled.div`
-  font-size: ${props => props.theme.typography.fontSizes.xl};
-  font-weight: ${props => props.theme.typography.fontWeights.bold};
-`;
+// Removido e substituído pelo componente LogoImage
 
 const UserInfo = styled.div`
   display: flex;
@@ -82,7 +79,7 @@ const MainPageUser = () => {
     <PageContainer>
       <Header>
         <HeaderContent>
-          <Logo>PharmaBridge</Logo>
+          <LogoImage clickable size="40px" />
           <UserInfo>
             <Typography variant="body1">
               Olá, {user?.firstName || 'Usuário'}

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../../AuthContext';
-import { Typography, Button, Card, Grid, Badge, UserAvatar } from '../../components/common';
+import { Typography, Button, Card, Grid, Badge, UserAvatar, LogoImage } from '../../components/common';
 
 // Styled Components
 const PageContainer = styled.div`
@@ -118,7 +118,9 @@ const MainPagePharmacy = () => {
     <PageContainer>
       <Header>
         <HeaderContent>
-          <Logo>PharmaBridge</Logo>
+          <Logo>
+            <LogoImage size="40px" clickable />
+          </Logo>
           <UserInfo>
             <Typography variant="body1">
               Farmácia {user?.username || 'Parceira'}
