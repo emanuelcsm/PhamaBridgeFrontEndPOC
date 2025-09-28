@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../AuthContext";
-import logo from "../logoPharmaBridge.jpg"; // Usando o logo existente
+import logo from "../logoPharmaBridge.jpg";
 import "./LoginPage.css";
 
 const LoginPage = () => {
@@ -23,7 +23,7 @@ const LoginPage = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "Failed to login. Please check your credentials."
+          "Falha no login. Por favor, verifique suas credenciais."
       );
     } finally {
       setIsLoading(false);
@@ -33,43 +33,43 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
-        <img src={logo} alt="PharmaBridge Logo" className="login-logo" />
-        <h2>Welcome Back</h2>
+        <img src={logo} alt="Logo PharmaBridge" className="login-logo" />
+        <h2>Bem-vindo de Volta</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">Usuário</label>
             <input
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              placeholder="Digite seu nome de usuário"
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Senha</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Digite sua senha"
               required
             />
-          </div>
-          <div className="forgot-password">
-            <a href="#forgot">Forgot Password?</a>
           </div>
           <button
             type="submit"
             className="login-button"
             disabled={isLoading}
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {isLoading ? "Entrando..." : "Entrar"}
           </button>
         </form>
+        <div className="forgot-password-link">
+          <Link to="/forgot-password">Esqueci minha senha</Link>
+        </div>
       </div>
     </div>
   );

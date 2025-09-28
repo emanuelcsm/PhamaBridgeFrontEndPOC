@@ -47,7 +47,7 @@ const HomePage = () => {
     <div className="home-container">
       <header className="header">
         <div className="logo-container">
-          <img src={logo} alt="PharmaBridge Logo" className="logo" />
+          <img src={logo} alt="Logo PharmaBridge" className="logo" />
           <h1 className="header-title">PharmaBridge</h1>
         </div>
         
@@ -56,7 +56,7 @@ const HomePage = () => {
             ref={avatarRef}
             className="user-avatar-button" 
             onClick={toggleUserMenu} 
-            aria-label="User menu"
+            aria-label="Menu do usuário"
           >
             {getUserInitials()}
           </button>
@@ -72,20 +72,20 @@ const HomePage = () => {
                 <li className="user-menu-item">
                   <button onClick={() => navigate('/profile')}>
                     <i className="menu-icon profile-icon"></i>
-                    My Profile
+                    Meu Perfil
                   </button>
                 </li>
                 <li className="user-menu-item">
                   <button onClick={() => navigate('/security')}>
                     <i className="menu-icon security-icon"></i>
-                    Security
+                    Segurança
                   </button>
                 </li>
                 <li className="user-menu-divider"></li>
                 <li className="user-menu-item">
                   <button onClick={handleLogout}>
                     <i className="menu-icon logout-icon"></i>
-                    Logout
+                    Sair
                   </button>
                 </li>
               </ul>
@@ -95,15 +95,15 @@ const HomePage = () => {
       </header>
 
       <section className="welcome-section">
-        <h2>Welcome to PharmaBridge</h2>
-        <p>Your comprehensive pharmaceutical management system</p>
+        <h2>Bem-vindo ao PharmaBridge</h2>
+        <p>Seu sistema completo de gestão farmacêutica</p>
       </section>
       
       <div className="user-info-card">
-        <h3 className="user-greeting">Hello, {user?.firstName} {user?.lastName}</h3>
+        <h3 className="user-greeting">Olá, {user?.firstName} {user?.lastName}</h3>
         
         <div className="user-detail">
-          <span className="user-detail-label">Username:</span>
+          <span className="user-detail-label">Usuário:</span>
           <span className="user-detail-value">{user?.username}</span>
         </div>
         
@@ -113,7 +113,7 @@ const HomePage = () => {
         </div>
         
         <div className="roles-container">
-          <div className="roles-title">Your Roles:</div>
+          <div className="roles-title">Suas Funções:</div>
           <ul className="roles-list">
             {user?.roles && user.roles.map(role => (
               <li key={role} className="role-item">{role}</li>

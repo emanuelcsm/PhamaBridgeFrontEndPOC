@@ -3,7 +3,7 @@ import authService from './services/authService';
 
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
           }
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
+        console.error('Falha na verificação de autenticação:', error);
         // Clear any invalid auth data
         authService.logout();
       } finally {
@@ -56,10 +56,8 @@ export function AuthProvider({ children }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);
 
 export default AuthContext;

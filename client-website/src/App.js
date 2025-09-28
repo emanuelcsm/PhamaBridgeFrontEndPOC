@@ -3,7 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider } from "./AuthContext";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import SecurityPage from "./pages/SecurityPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import "./App.css";
 
 function App() {
@@ -12,18 +15,20 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-            {/* Public routes */}
+            {/* Rotas públicas */}
             <Route path="/login" element={<ProtectedRoute requiresAuth={false} />}>
               <Route index element={<LoginPage />} />
             </Route>
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-            {/* Protected routes */}
+            {/* Rotas protegidas */}
             <Route path="/" element={<ProtectedRoute requiresAuth={true} />}>
               <Route index element={<HomePage />} />
-              {/* Add other protected routes here */}
+              <Route path="/security" element={<SecurityPage />} />
             </Route>
 
-            {/* Redirect any unknown routes to home or login based on auth status */}
+            {/* Redireciona rotas desconhecidas para home ou login baseado no estado de autenticação */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>

@@ -27,6 +27,19 @@ export const authService = {
     }
   },
 
+  changePassword: async (currentPassword, newPassword) => {
+    try {
+      const response = await api.post('/auth/change-password', {
+        currentPassword,
+        newPassword
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Change password error:', error);
+      throw error;
+    }
+  },
+
   logout: () => {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(USER_DATA_KEY);
@@ -48,6 +61,51 @@ export const authService = {
   hasRole: (role) => {
     const userData = authService.getUserData();
     return userData?.roles?.includes(role) || false;
+  }
+};
+
+export const requestPasswordRecovery = async (email) => {
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/recover-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Falha ao solicitar recuperação de senha');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao solicitar recuperação de senha:', error);
+    throw error;
+  }
+};
+
+export const forgotPassword = async (email) => {
+  try {
+    const response = await api.post('/auth/forgot-password', { email });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao solicitar recuperação de senha:', error);
+    throw error;
+  }
+};
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const response = await api.post("/auth/reset-password", {
+      token,
+      newPassword: newPassword,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Erro ao redefinir senha:', error);
+    throw error;
   }
 };
 

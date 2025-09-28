@@ -7,7 +7,7 @@ const ProtectedRoute = ({ requiresAuth = true }) => {
   
   // While checking authentication status, show nothing or a loading indicator
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">Carregando...</div>;
   }
 
   // If we require authentication and user is not authenticated, redirect to login
