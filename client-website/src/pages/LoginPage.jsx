@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
-import "./LoginPage.css"; // Make sure to create this CSS file
+import logo from "../logoPharmaBridge.jpg"; // Usando o logo existente
+import "./LoginPage.css";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -32,7 +33,8 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <div className="login-form-wrapper">
-        <h2>Login to PharmaBridge</h2>
+        <img src={logo} alt="PharmaBridge Logo" className="login-logo" />
+        <h2>Welcome Back</h2>
         {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -42,6 +44,7 @@ const LoginPage = () => {
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username"
               required
             />
           </div>
@@ -52,8 +55,12 @@ const LoginPage = () => {
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
               required
             />
+          </div>
+          <div className="forgot-password">
+            <a href="#forgot">Forgot Password?</a>
           </div>
           <button
             type="submit"

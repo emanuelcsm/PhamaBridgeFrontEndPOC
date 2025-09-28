@@ -1,0 +1,36 @@
+:root {
+  /* Color palette */
+  --color-primary: #1A73E8;      /* Deep Blue - for buttons and headers */
+  --color-secondary: #34A853;    /* Mint Green - for icons and CTAs */
+  --color-background: #FFFFFF;   /* Snow White - for main background */
+  --color-background-alt: #F1F3F4; /* Light Gray - for secondary background and cards */
+  --color-text-secondary: #5F6368; /* Medium Gray - for secondary text and borders */
+  --color-text-primary: #202124; /* Dark Gray - for primary text */
+  --color-error: #EA4335;        /* Red - for error messages */
+  --color-success: #34A853;      /* Green - for success messages */
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Border radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+
+  /* Font sizes */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
