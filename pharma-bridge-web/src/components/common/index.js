@@ -12,6 +12,7 @@ import { Modal, Modal2 } from './Modal';
 import UserAvatar from './UserAvatar';
 import LogoImage from './LogoImage';
 import RegisterTypeModal from './RegisterTypeModal';
+import { PhoneInput, ZipCodeInput } from './MaskedInputs';
 
 export {
   Button,
@@ -25,5 +26,7 @@ export {
   Modal2,
   UserAvatar,
   LogoImage,
-  RegisterTypeModal
+  RegisterTypeModal,
+  PhoneInput,
+  ZipCodeInput
 };

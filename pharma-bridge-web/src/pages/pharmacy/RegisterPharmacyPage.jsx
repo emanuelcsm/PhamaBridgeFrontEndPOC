@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { Typography, Button, Card, Input, Alert, LogoImage } from '../../components/common';
+import { Typography, Button, Card, Input, Alert, LogoImage, PhoneInput, ZipCodeInput } from '../../components/common';
 import { registerPharmacy } from '../../services/registerService';
 
 // Styled Components
@@ -148,14 +148,13 @@ const RegisterPharmacyPage = () => {
       return;
     }
     
-    // Validate ZipCode format
+    // Validate ZipCode and Phone formats - now handled by the specialized input components
     const zipCodeRegex = /^\d{5}-\d{3}$/;
     if (!zipCodeRegex.test(formData.zipCode)) {
       setErrorMessage('CEP inválido. Use o formato: XXXXX-XXX');
       return;
     }
     
-    // Validate phone number format
     const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
     if (!phoneRegex.test(formData.phoneNumber)) {
       setErrorMessage('Telefone inválido. Use o formato: (XX) XXXXX-XXXX');
@@ -312,12 +311,11 @@ const RegisterPharmacyPage = () => {
               </FormGroup>
               
               <FormGroup style={{ flex: 1 }}>
-                <Input 
+                <ZipCodeInput 
                   label="CEP" 
                   name="zipCode" 
                   value={formData.zipCode} 
                   onChange={handleChange}
-                  placeholder="XXXXX-XXX"
                   required
                 />
               </FormGroup>
@@ -330,12 +328,11 @@ const RegisterPharmacyPage = () => {
             
             <FormRow>
               <FormGroup style={{ flex: 1 }}>
-                <Input 
+                <PhoneInput 
                   label="Telefone" 
                   name="phoneNumber" 
                   value={formData.phoneNumber} 
                   onChange={handleChange}
-                  placeholder="(XX) XXXXX-XXXX"
                   required
                 />
               </FormGroup>
