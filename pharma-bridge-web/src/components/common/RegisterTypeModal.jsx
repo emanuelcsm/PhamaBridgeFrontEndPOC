@@ -13,7 +13,7 @@ const OptionContainer = styled.div`
 const RegisterOption = styled.div`
   padding: ${props => props.theme.spacing.lg};
   border: 1px solid ${props => props.theme.colors.border};
-  border-radius: ${props => props.theme.borderRadius.md};
+  border-radius: ${props => props.theme.borders.radius.md};
   display: flex;
   flex-direction: column;
   align-items: center;

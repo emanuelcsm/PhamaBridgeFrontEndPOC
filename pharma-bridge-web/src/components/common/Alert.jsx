@@ -29,7 +29,13 @@ const getVariantStyles = (theme, variant) => {
   return variants[variant] || variants.info;
 };
 
-const StyledAlert = styled.div`
+const StyledAlert = styled.div.attrs(props => ({
+  // Filter out custom props so they don't get passed to the DOM
+  // This prevents React warnings about non-standard HTML attributes
+  variant: undefined,
+  outlined: undefined,
+  filled: undefined
+}))`
   display: flex;
   align-items: flex-start;
   width: 100%;

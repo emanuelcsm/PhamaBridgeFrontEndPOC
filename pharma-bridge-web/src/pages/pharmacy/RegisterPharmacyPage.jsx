@@ -110,6 +110,7 @@ const RegisterPharmacyPage = () => {
 
   // Form submission handler
   const handleSubmit = async (e) => {
+    console.log('Submitting form data:', formData);
     e.preventDefault();
     
     // Validation
