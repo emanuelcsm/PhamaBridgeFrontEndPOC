@@ -57,12 +57,24 @@ const MenuItem = styled.div`
   &:hover {
     background-color: ${props => props.theme.colors.surface};
   }
+`;
+
+const MenuItemIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   
   svg {
     width: 18px;
     height: 18px;
     color: ${props => props.theme.colors.text.secondary};
   }
+`;
+
+const MenuItemCaption = styled.div`
+  font-size: ${props => props.theme.typography.fontSizes.sm};
+  color: ${props => props.theme.colors.text.primary};
+  font-weight: ${props => props.theme.typography.fontWeights.medium};
 `;
 
 const MenuDivider = styled.div`
@@ -123,17 +135,21 @@ const UserAvatar = ({ variant = 'user', initials }) => {
       
       <DropdownMenu isOpen={isMenuOpen} ref={menuRef}>
         <MenuItem onClick={handleSecurityClick}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
-          Segurança
+          <MenuItemIcon>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </MenuItemIcon>
+          <MenuItemCaption>Segurança</MenuItemCaption>
         </MenuItem>
         <MenuDivider />
         <MenuItem onClick={handleSignOut}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          Sair
+          <MenuItemIcon>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </MenuItemIcon>
+          <MenuItemCaption>Sair</MenuItemCaption>
         </MenuItem>
       </DropdownMenu>
     </AvatarContainer>
