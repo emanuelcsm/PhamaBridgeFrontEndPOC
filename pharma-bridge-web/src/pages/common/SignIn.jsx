@@ -66,9 +66,9 @@ const SignIn = () => {
       const userData = await login(username, password);
       
       // Redirecionar com base na role do usuário
-      if (userData.roles.includes('ROLE_CUSTOMER')) {
+      if (userData.roles.includes('Customer')) {
         navigate('/user/home');
-      } else if (userData.roles.includes('ROLE_PHARMACY')) {
+      } else if (userData.roles.includes('PharmacyUser')) {
         navigate('/pharmacy/home');
       } else {
         // Fallback para usuários com outras roles

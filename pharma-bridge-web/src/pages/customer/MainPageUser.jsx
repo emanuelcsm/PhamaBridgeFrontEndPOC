@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useAuth } from '../../AuthContext';
-import { Typography, Button, Card, Grid } from '../../components/common';
+import { Typography, Button, Card, Grid, UserAvatar } from '../../components/common';
 
 // Styled Components
 const PageContainer = styled.div`
@@ -35,17 +35,7 @@ const UserInfo = styled.div`
   gap: ${props => props.theme.spacing.md};
 `;
 
-const Avatar = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: ${props => props.theme.colors.accent};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-weight: ${props => props.theme.typography.fontWeights.bold};
-`;
+// Removido e substituído pelo componente UserAvatar
 
 const Content = styled.main`
   max-width: 1200px;
@@ -78,12 +68,9 @@ const CardIcon = styled.div`
 `;
 
 const MainPageUser = () => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   
-  const handleLogout = () => {
-    logout();
-    // O redirecionamento será feito automaticamente pelo ProtectedRoute
-  };
+  // A função de logout foi movida para o componente UserAvatar
   
   // Função para obter as iniciais do nome do usuário
   const getUserInitials = () => {
@@ -100,10 +87,7 @@ const MainPageUser = () => {
             <Typography variant="body1">
               Olá, {user?.firstName || 'Usuário'}
             </Typography>
-            <Avatar>{getUserInitials()}</Avatar>
-            <Button variant="outline" size="small" onClick={handleLogout}>
-              Sair
-            </Button>
+            <UserAvatar variant="user" initials={getUserInitials()} />
           </UserInfo>
         </HeaderContent>
       </Header>

@@ -6,8 +6,9 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 // Páginas
 import SignIn from './pages/common/SignIn';
+import SecurityPage from './pages/common/SecurityPage';
 import MainPageUser from './pages/customer/MainPageUser';
-import MainPagePharmacy from './pages/customer/MainPagePharmacy';
+import MainPagePharmacy from './pages/pharmacy/MainPagePharmacy';
 
 function App() {
   return (
@@ -21,13 +22,18 @@ function App() {
             </Route>
 
             {/* Rotas protegidas para usuários (clientes) */}
-            <Route path="/user/home" element={<ProtectedRoute requiresAuth={true} requiredRole="ROLE_CUSTOMER" />}>
+            <Route path="/user/home" element={<ProtectedRoute requiresAuth={true} requiredRole="Customer" />}>
               <Route index element={<MainPageUser />} />
             </Route>
 
             {/* Rotas protegidas para farmácias */}
-            <Route path="/pharmacy/home" element={<ProtectedRoute requiresAuth={true} requiredRole="ROLE_PHARMACY" />}>
+            <Route path="/pharmacy/home" element={<ProtectedRoute requiresAuth={true} requiredRole="PharmacyUser" />}>
               <Route index element={<MainPagePharmacy />} />
+            </Route>
+            
+            {/* Página de segurança (acessível para qualquer usuário autenticado) */}
+            <Route path="/security" element={<ProtectedRoute requiresAuth={true} />}>
+              <Route index element={<SecurityPage />} />
             </Route>
 
             {/* Rota padrão - redireciona para signin */}

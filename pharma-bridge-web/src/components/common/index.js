@@ -9,6 +9,7 @@ import Badge from './Badge';
 import Grid from './Grid';
 import Typography from './Typography';
 import { Modal, Modal2 } from './Modal';
+import UserAvatar from './UserAvatar';
 
 export {
   Button,
@@ -19,5 +20,6 @@ export {
   Grid,
   Typography,
   Modal,
-  Modal2
+  Modal2,
+  UserAvatar
 };

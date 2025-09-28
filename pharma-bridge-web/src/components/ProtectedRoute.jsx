@@ -51,11 +51,11 @@ const ProtectedRoute = ({ requiresAuth = true, requiredRole = null }) => {
     
     if (!hasRequiredRole) {
       // If the user is a customer, redirect to user main page
-      if (user.roles.includes('ROLE_CUSTOMER')) {
+      if (user.roles.includes('Customer')) {
         return <Navigate to="/user/home" replace />;
       }
       // If the user is a pharmacy, redirect to pharmacy main page
-      if (user.roles.includes('ROLE_PHARMACY')) {
+      if (user.roles.includes('PharmacyUser')) {
         return <Navigate to="/pharmacy/home" replace />;
       }
       // Fallback to sign in if no recognized role
@@ -65,10 +65,10 @@ const ProtectedRoute = ({ requiresAuth = true, requiredRole = null }) => {
   
   // If user is authenticated but tries to access sign in page, redirect based on role
   if (!requiresAuth && isAuthenticated) {
-    if (user.roles.includes('ROLE_CUSTOMER')) {
+    if (user.roles.includes('Customer')) {
       return <Navigate to="/user/home" replace />;
     }
-    if (user.roles.includes('ROLE_PHARMACY')) {
+    if (user.roles.includes('PharmacyUser')) {
       return <Navigate to="/pharmacy/home" replace />;
     }
     // Fallback to a default location if no recognized role
