@@ -11,7 +11,9 @@ import {
   LogoImage,
   UserNameDisplay,
   Modal,
-  Input
+  Input,
+  PhoneInput,
+  ZipCodeInput
 } from '../../components/common';
 import { 
   PageContainer, 
@@ -457,9 +459,8 @@ const MainPageUser = () => {
             </Grid.Col>
             <Grid.Col size={8}>
               <FormGroup>
-                <Input
+                <ZipCodeInput
                   label="CEP"
-                  placeholder="00000-000"
                   value={address.zipCode}
                   onChange={(e) => handleAddressChange('zipCode', e.target.value)}
                   fullWidth
@@ -469,9 +470,8 @@ const MainPageUser = () => {
           </Grid.Row>
           
           <FormGroup>
-            <Input
+            <PhoneInput
               label="Telefone"
-              placeholder="(00) 00000-0000"
               value={address.phoneNumber}
               onChange={(e) => handleAddressChange('phoneNumber', e.target.value)}
               fullWidth
