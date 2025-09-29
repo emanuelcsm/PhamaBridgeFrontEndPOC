@@ -237,4 +237,8 @@ Modal2.propTypes = {
   children: PropTypes.node,
 };
 
+// Add Actions as a subcomponent of Modal for easier usage
+Modal.Actions = ModalActions;
+Modal2.Actions = ModalActions;
+
 export { Modal, Modal2 };
