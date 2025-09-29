@@ -64,27 +64,27 @@ export const authService = {
   }
 };
 
-export const requestPasswordRecovery = async (email) => {
-  try {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/recover-password`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    });
+// export const requestPasswordRecovery = async (email) => {
+//   try {
+//     const response = await fetch(`${process.env.REACT_APP_API_URL}/auth/recover-password`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ email }),
+//     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Falha ao solicitar recuperação de senha');
-    }
+//     if (!response.ok) {
+//       const errorData = await response.json();
+//       throw new Error(errorData.message || 'Falha ao solicitar recuperação de senha');
+//     }
 
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao solicitar recuperação de senha:', error);
-    throw error;
-  }
-};
+//     return await response.json();
+//   } catch (error) {
+//     console.error('Erro ao solicitar recuperação de senha:', error);
+//     throw error;
+//   }
+// };
 
 export const forgotPassword = async (email) => {
   try {

@@ -11,6 +11,7 @@ import MainPageUser from './pages/customer/MainPageUser';
 import MainPagePharmacy from './pages/pharmacy/MainPagePharmacy';
 import RegisterPharmacyPage from './pages/pharmacy/RegisterPharmacyPage';
 import RegisterCustomerPage from './pages/customer/RegisterCustomerPage';
+import { ForgotPasswordPage, ResetPasswordPage } from './pages/auth';
 
 function App() {
   return (
@@ -41,6 +42,10 @@ function App() {
             {/* Rotas de registro */}
             <Route path="/register/pharmacy" element={<RegisterPharmacyPage />} />
             <Route path="/register/customer" element={<RegisterCustomerPage />} />
+            
+            {/* Rotas de recuperação de senha */}
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             
             {/* Rota padrão - redireciona para signin */}
             <Route path="/" element={<Navigate to="/signin" replace />} />

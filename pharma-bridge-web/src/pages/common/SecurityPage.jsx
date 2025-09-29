@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
 import { Typography, Button, Card, Input, Alert, UserAvatar, LogoImage } from '../../components/common';
+import { authService } from '../../services/authService';
 
 // Styled Components
 const PageContainer = styled.div`
@@ -113,23 +114,31 @@ const SecurityPage = () => {
     setSuccessMessage('');
     
     try {
-      // Aqui você chamaria seu serviço de autenticação
-      // await authService.changePassword(currentPassword, newPassword);
-      
-      // Simulação de sucesso (remover isso quando implementar a chamada real)
-      setTimeout(() => {
-        setSuccessMessage('Senha alterada com sucesso!');
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
-        setLoading(false);
-      }, 1000);
-      
-    } catch (error) {
-      console.error('Erro ao alterar senha:', error);
-      setErrorMessage('Ocorreu um erro ao alterar sua senha. Verifique se a senha atual está correta.');
+      await authService.changePassword(currentPassword, newPassword);
+      navigate('/');
+    } catch (err) {
+      console.error('Erro ao alterar a senha:', err);
+    } finally {
       setLoading(false);
     }
+
+    // try {
+    //   // Aqui você chamaria seu serviço de autenticação
+      
+    //   // Simulação de sucesso (remover isso quando implementar a chamada real)
+    //   // setTimeout(() => {
+    //   //   setSuccessMessage('Senha alterada com sucesso!');
+    //   //   setCurrentPassword('');
+    //   //   setNewPassword('');
+    //   //   setConfirmPassword('');
+    //   //   setLoading(false);
+    //   // }, 1000);
+      
+    // } catch (error) {
+    //   console.error('Erro ao alterar senha:', error);
+    //   setErrorMessage('Ocorreu um erro ao alterar sua senha. Verifique se a senha atual está correta.');
+    //   setLoading(false);
+    // }
   };
   
   return (
