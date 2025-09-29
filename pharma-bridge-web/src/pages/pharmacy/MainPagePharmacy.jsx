@@ -1,100 +1,22 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useAuth } from '../../AuthContext';
 import { Typography, Button, Card, Grid, Badge, UserAvatar, LogoImage } from '../../components/common';
-
-// Styled Components
-const PageContainer = styled.div`
-  min-height: 100vh;
-  background-color: ${props => props.theme.colors.surface};
-`;
-
-const Header = styled.header`
-  background-color: ${props => props.theme.colors.primary};
-  color: white;
-  padding: ${props => props.theme.spacing.md};
-  box-shadow: ${props => props.theme.shadows.md};
-`;
-
-const HeaderContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const Logo = styled.div`
-  font-size: ${props => props.theme.typography.fontSizes.xl};
-  font-weight: ${props => props.theme.typography.fontWeights.bold};
-`;
-
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${props => props.theme.spacing.md};
-`;
-
-// Removido e substituído pelo componente UserAvatar
-
-const Content = styled.main`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: ${props => props.theme.spacing.xl};
-`;
-
-const DashboardSection = styled.section`
-  margin-bottom: ${props => props.theme.spacing.xxl};
-`;
-
-const CardGrid = styled(Grid.Row)`
-  margin-top: ${props => props.theme.spacing.lg};
-`;
-
-const StyledCard = styled(Card)`
-  height: 100%;
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-  }
-`;
-
-const CardIcon = styled.div`
-  font-size: 48px;
-  color: ${props => props.theme.colors.primary};
-  margin-bottom: ${props => props.theme.spacing.md};
-  text-align: center;
-`;
-
-const StatCard = styled(Card)`
-  text-align: center;
-  padding: ${props => props.theme.spacing.md};
-  margin-bottom: ${props => props.theme.spacing.md};
-`;
-
-const StatValue = styled.div`
-  font-size: ${props => props.theme.typography.fontSizes.xxl};
-  font-weight: ${props => props.theme.typography.fontWeights.bold};
-  color: ${props => props.theme.colors.primary};
-  margin: ${props => props.theme.spacing.md} 0;
-`;
-
-const PrescriptionItem = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: ${props => props.theme.spacing.md};
-  border-bottom: 1px solid ${props => props.theme.colors.border};
-  
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-const PrescriptionInfo = styled.div`
-  flex: 1;
-`;
+import { 
+  PageContainer, 
+  Header, 
+  HeaderContent, 
+  UserInfo, 
+  Content,
+  Logo,
+  DashboardSection,
+  CardGrid,
+  StyledCard,
+  CardIcon,
+  StatCard,
+  StatValue,
+  PrescriptionItem,
+  PrescriptionInfo
+} from '../../components/styled';
 
 const MainPagePharmacy = () => {
   const { user } = useAuth();

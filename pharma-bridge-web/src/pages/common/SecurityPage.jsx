@@ -1,56 +1,18 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
 import { Typography, Button, Card, Input, Alert, UserAvatar, LogoImage } from '../../components/common';
+import { 
+  PageContainer, 
+  Header, 
+  HeaderContent, 
+  Logo, 
+  UserInfo, 
+  Content,
+  Section,
+  FormGroup
+} from '../../components/styled';
 import { authService } from '../../services/authService';
-
-// Styled Components
-const PageContainer = styled.div`
-  min-height: 100vh;
-  background-color: ${props => props.theme.colors.surface};
-`;
-
-const Header = styled.header`
-  background-color: ${props => props.theme.colors.primary};
-  color: white;
-  padding: ${props => props.theme.spacing.md};
-  box-shadow: ${props => props.theme.shadows.md};
-`;
-
-const HeaderContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-const Logo = styled.div`
-  font-size: ${props => props.theme.typography.fontSizes.xl};
-  font-weight: ${props => props.theme.typography.fontWeights.bold};
-  cursor: pointer;
-`;
-
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${props => props.theme.spacing.md};
-`;
-
-const Content = styled.main`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: ${props => props.theme.spacing.xl};
-`;
-
-const Section = styled.section`
-  margin-bottom: ${props => props.theme.spacing.xl};
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: ${props => props.theme.spacing.lg};
-`;
 
 const SecurityPage = () => {
   const { user } = useAuth();

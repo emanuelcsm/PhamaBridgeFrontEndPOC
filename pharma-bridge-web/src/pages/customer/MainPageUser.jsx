@@ -1,68 +1,17 @@
 import React from 'react';
-import styled from 'styled-components';
 import { useAuth } from '../../AuthContext';
 import { Typography, Button, Card, Grid, UserAvatar, LogoImage } from '../../components/common';
-
-// Styled Components
-const PageContainer = styled.div`
-  min-height: 100vh;
-  background-color: ${props => props.theme.colors.surface};
-`;
-
-const Header = styled.header`
-  background-color: ${props => props.theme.colors.primary};
-  color: white;
-  padding: ${props => props.theme.spacing.md};
-  box-shadow: ${props => props.theme.shadows.md};
-`;
-
-const HeaderContent = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
-
-// Removido e substituído pelo componente LogoImage
-
-const UserInfo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${props => props.theme.spacing.md};
-`;
-
-// Removido e substituído pelo componente UserAvatar
-
-const Content = styled.main`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: ${props => props.theme.spacing.xl};
-`;
-
-const DashboardSection = styled.section`
-  margin-bottom: ${props => props.theme.spacing.xxl};
-`;
-
-const CardGrid = styled(Grid.Row)`
-  margin-top: ${props => props.theme.spacing.lg};
-`;
-
-const StyledCard = styled(Card)`
-  height: 100%;
-  transition: transform 0.3s ease;
-  
-  &:hover {
-    transform: translateY(-5px);
-  }
-`;
-
-const CardIcon = styled.div`
-  font-size: 48px;
-  color: ${props => props.theme.colors.primary};
-  margin-bottom: ${props => props.theme.spacing.md};
-  text-align: center;
-`;
+import { 
+  PageContainer, 
+  Header, 
+  HeaderContent, 
+  UserInfo, 
+  Content,
+  DashboardSection,
+  CardGrid,
+  StyledCard,
+  CardIcon
+} from '../../components/styled';
 
 const MainPageUser = () => {
   const { user } = useAuth();
