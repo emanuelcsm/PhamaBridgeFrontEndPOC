@@ -13,7 +13,9 @@ import {
   Modal,
   Input,
   PhoneInput,
-  ZipCodeInput
+  ZipCodeInput,
+  TabContainer,
+  Tab
 } from '../../components/common';
 import { 
   PageContainer, 
@@ -24,6 +26,7 @@ import {
   Section,
   FormGroup
 } from '../../components/styled';
+import QuotesTable from '../../components/customer/QuotesTable';
 
 // Componentes estilizados adicionais
 const QuoteButton = styled(Button)`
@@ -87,6 +90,7 @@ const MainPageUser = () => {
   const [items, setItems] = useState([{ Formula: '', Observation: '' }]);
   const [currentItem, setCurrentItem] = useState({ Formula: '', Observation: '' });
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [refreshQuotes, setRefreshQuotes] = useState(0);
   const [address, setAddress] = useState({
     street: '',
     number: '',
@@ -207,6 +211,9 @@ const MainPageUser = () => {
         phoneNumber: ''
       });
       
+      // Atualiza a tabela de cotações
+      setRefreshQuotes(prev => prev + 1);
+      
       // Exibe uma mensagem de sucesso (você pode implementar um componente de alerta)
       alert('Cotação enviada com sucesso!');
     } catch (error) {
@@ -243,6 +250,17 @@ const MainPageUser = () => {
           >
             Solicitar Nova Cotação
           </QuoteButton>
+
+          <TabContainer>
+            <Tab label="Cotações">
+              <QuotesTable refreshTrigger={refreshQuotes} />
+            </Tab>
+            <Tab label="Pedidos">
+              <Typography variant="body1" style={{ padding: '20px 0' }}>
+                Aqui serão exibidos seus pedidos em andamento.
+              </Typography>
+            </Tab>
+          </TabContainer>
         </Section>
         
         {/* Modal para upload da receita */}

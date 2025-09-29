@@ -14,6 +14,7 @@ import LogoImage from './LogoImage';
 import RegisterTypeModal from './RegisterTypeModal';
 import { PhoneInput, ZipCodeInput } from './MaskedInputs';
 import UserNameDisplay from './UserNameDisplay';
+import { TabContainer, Tab } from './Tabs';
 
 export {
   Button,
@@ -30,5 +31,7 @@ export {
   RegisterTypeModal,
   PhoneInput,
   ZipCodeInput,
-  UserNameDisplay
+  UserNameDisplay,
+  TabContainer,
+  Tab
 };
