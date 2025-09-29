@@ -224,6 +224,38 @@ const MainPageUser = () => {
     }
   };
 
+  // Adicione esta função dentro do componente MainPageUser
+  const handleOpenFileModal = async () => {
+    try {
+      const response = await api.get('/users/get-last-address');
+      if (response.data) {
+        setAddress({
+          street: response.data.street || '',
+          number: response.data.number || '',
+          complement: response.data.complement || '',
+          neighborhood: response.data.neighborhood || '',
+          city: response.data.city || '',
+          state: response.data.state || '',
+          zipCode: response.data.zipCode || '',
+          phoneNumber: response.data.phoneNumber || ''
+        });
+      }
+    } catch (error) {
+      // Se der erro, apenas abre o modal normalmente (endereço vazio)
+      setAddress({
+        street: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        phoneNumber: ''
+      });
+    }
+    setFileModalOpen(true);
+  };
+
   return (
     <PageContainer>
       <Header>
@@ -246,7 +278,7 @@ const MainPageUser = () => {
           <QuoteButton 
             variant="primary" 
             size="large"
-            onClick={() => setFileModalOpen(true)}
+            onClick={handleOpenFileModal}
           >
             Solicitar Nova Cotação
           </QuoteButton>
