@@ -8,8 +8,7 @@ export const PageContainer = styled.div`
 
 // Header components
 export const Header = styled.header`
-  background-color: ${props => props.theme.colors.primary};
-  color: white;
+  background-color: ${props => props.theme.colors.background};
   padding: ${props => props.theme.spacing.md};
   box-shadow: ${props => props.theme.shadows.md};
 `;

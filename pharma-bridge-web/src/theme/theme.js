@@ -4,12 +4,12 @@
 const theme = {
   // Cores principais
   colors: {
-    primary: '#2E7D32', // Verde escuro (farmácia)
-    secondary: '#4CAF50', // Verde médio
-    accent: '#81C784', // Verde claro
+    primary: '#1565C0', // Azul escuro (principal)
+    secondary: '#2196F3', // Azul médio
+    accent: '#64B5F6', // Azul claro
     error: '#D32F2F', // Vermelho para erros
     warning: '#FFA000', // Laranja para alertas
-    info: '#1976D2', // Azul para informações
+    info: '#0288D1', // Azul para informações
     success: '#388E3C', // Verde para sucesso
     
     // Tons neutros
@@ -24,8 +24,8 @@ const theme = {
     
     // Estados
     hover: {
-      primary: '#1B5E20',
-      secondary: '#388E3C',
+      primary: '#0D47A1',
+      secondary: '#1976D2',
     }
   },
   

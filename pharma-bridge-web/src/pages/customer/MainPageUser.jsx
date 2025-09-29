@@ -1,6 +1,14 @@
 import React from 'react';
 import { useAuth } from '../../AuthContext';
-import { Typography, Button, Card, Grid, UserAvatar, LogoImage } from '../../components/common';
+import { 
+  Typography, 
+  Button, 
+  Card, 
+  Grid, 
+  UserAvatar, 
+  LogoImage,
+  UserNameDisplay 
+} from '../../components/common';
 import { 
   PageContainer, 
   Header, 
@@ -16,8 +24,6 @@ import {
 const MainPageUser = () => {
   const { user } = useAuth();
   
-  // A função de logout foi movida para o componente UserAvatar
-  
   // Função para obter as iniciais do nome do usuário
   const getUserInitials = () => {
     if (!user?.firstName || !user?.lastName) return '?';
@@ -30,9 +36,7 @@ const MainPageUser = () => {
         <HeaderContent>
           <LogoImage clickable size="40px" />
           <UserInfo>
-            <Typography variant="body1">
-              Olá, {user?.firstName || 'Usuário'}
-            </Typography>
+            <UserNameDisplay user={user} greeting="Olá" />
             <UserAvatar variant="user" initials={getUserInitials()} />
           </UserInfo>
         </HeaderContent>

@@ -13,6 +13,7 @@ import UserAvatar from './UserAvatar';
 import LogoImage from './LogoImage';
 import RegisterTypeModal from './RegisterTypeModal';
 import { PhoneInput, ZipCodeInput } from './MaskedInputs';
+import UserNameDisplay from './UserNameDisplay';
 
 export {
   Button,
@@ -28,5 +29,6 @@ export {
   LogoImage,
   RegisterTypeModal,
   PhoneInput,
-  ZipCodeInput
+  ZipCodeInput,
+  UserNameDisplay
 };

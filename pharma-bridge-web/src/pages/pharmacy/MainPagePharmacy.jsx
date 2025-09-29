@@ -1,6 +1,13 @@
 import React from 'react';
 import { useAuth } from '../../AuthContext';
-import { Typography, Button, Card, Grid, Badge, UserAvatar, LogoImage } from '../../components/common';
+import { 
+  Typography, 
+  Button, 
+  Card, 
+  UserAvatar, 
+  LogoImage,
+  UserNameDisplay
+} from '../../components/common';
 import { 
   PageContainer, 
   Header, 
@@ -44,9 +51,7 @@ const MainPagePharmacy = () => {
             <LogoImage size="40px" clickable />
           </Logo>
           <UserInfo>
-            <Typography variant="body1">
-              Farmácia {user?.username || 'Parceira'}
-            </Typography>
+            <UserNameDisplay user={user} greeting="Olá" />
             <UserAvatar variant="pharmacy" initials={getPharmacyInitial()} />
           </UserInfo>
         </HeaderContent>

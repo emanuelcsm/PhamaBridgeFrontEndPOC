@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../AuthContext';
-import { Typography, Button, Card, Input, Alert, UserAvatar, LogoImage } from '../../components/common';
 import { 
-  PageContainer, 
-  Header, 
-  HeaderContent, 
-  Logo, 
-  UserInfo, 
+  Typography, 
+  Button, 
+  Card, 
+  Input, 
+  Alert, 
+  UserAvatar, 
+  LogoImage,
+  UserNameDisplay 
+} from '../../components/common';
+import {
+  PageContainer,
+  Header,
+  HeaderContent,
+  Logo,
+  UserInfo,
   Content,
   Section,
   FormGroup
@@ -111,11 +120,7 @@ const SecurityPage = () => {
             <LogoImage size="40px" clickable onClick={goBackToHome} />
           </Logo>
           <UserInfo>
-            <Typography variant="body1">
-              {user?.roles?.includes('Customer') 
-                ? `${user?.firstName || 'Usuário'} ${user?.lastName || ''}`
-                : `Farmácia ${user?.username || 'Parceira'}`}
-            </Typography>
+            <UserNameDisplay user={user} />
             <UserAvatar 
               variant={getAvatarVariant()} 
               initials={getUserInitials()} 
