@@ -5,16 +5,16 @@ import logoImage from '../../logoPharmaBridge.jpg';
 const LogoWrapper = styled.div`
   display: flex;
   align-items: center;
-  cursor: ${props => props.clickable ? 'pointer' : 'default'};
+  cursor: ${props => props.$clickable ? 'pointer' : 'default'};
   transition: transform 0.2s ease-in-out;
   
   &:hover {
-    transform: ${props => props.clickable ? 'scale(1.05)' : 'none'};
+    transform: ${props => props.$clickable ? 'scale(1.05)' : 'none'};
   }
 `;
 
 const LogoImg = styled.img`
-  height: ${props => props.size || '60px'};
+  height: ${props => props.$size || '60px'};
   width: auto;
 `;
 
@@ -24,11 +24,11 @@ const LogoImage = ({
   onClick = () => {} 
 }) => {
   return (
-    <LogoWrapper clickable={clickable} onClick={clickable ? onClick : undefined}>
+    <LogoWrapper $clickable={clickable} onClick={clickable ? onClick : undefined}>
       <LogoImg 
         src={logoImage} 
         alt="PharmaBridge Logo" 
-        size={size} 
+        $size={size} 
       />
     </LogoWrapper>
   );

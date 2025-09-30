@@ -26,13 +26,13 @@ const TabHeader = styled.div`
     left: 0;
     width: 100%;
     height: 2px;
-    background-color: ${({ active, theme }) => active ? theme.colors.primary : 'transparent'};
+    background-color: ${({ $active, theme }) => $active ? theme.colors.primary : 'transparent'};
     transition: background-color 0.3s ease;
   }
 `;
 
 const TabContent = styled.div`
-  display: ${({ active }) => active ? 'block' : 'none'};
+  display: ${({ $active }) => $active ? 'block' : 'none'};
   padding: 10px 0;
 `;
 
@@ -60,7 +60,7 @@ export const TabContainer = ({ children, activeTab: externalActiveTab, onChange 
         {tabs.map((tab, index) => (
           <TabHeader
             key={index}
-            active={activeTab === index}
+            $active={activeTab === index}
             onClick={() => handleTabClick(index)}
           >
             <Typography variant="subtitle1" color={activeTab === index ? 'primary' : 'inherit'}>
@@ -71,7 +71,7 @@ export const TabContainer = ({ children, activeTab: externalActiveTab, onChange 
       </TabHeaders>
       
       {tabs.map((tab, index) => (
-        <TabContent key={index} active={activeTab === index}>
+        <TabContent key={index} $active={activeTab === index}>
           {tab.props.children}
         </TabContent>
       ))}

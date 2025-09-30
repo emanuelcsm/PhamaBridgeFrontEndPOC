@@ -17,7 +17,6 @@ import RegisterTypeModal from './RegisterTypeModal';
 import { PhoneInput, ZipCodeInput } from './MaskedInputs';
 import UserNameDisplay from './UserNameDisplay';
 import { TabContainer, Tab } from './Tabs';
-import QuoteDetails from './QuoteDetails';
 
 export {
   Button,
@@ -38,6 +37,5 @@ export {
   UserNameDisplay,
   TabContainer,
   Tab,
-  ConfirmDialog,
-  QuoteDetails
+  ConfirmDialog
 };

@@ -36,7 +36,7 @@ const ModalContainer = styled.div`
   padding: ${props => props.theme.spacing.lg};
   width: 100%;
   max-width: ${props => {
-    switch (props.size) {
+    switch (props.$size) {
       case 'xs': return '300px';
       case 'sm': return '400px';
       case 'md': return '600px';
@@ -49,7 +49,7 @@ const ModalContainer = styled.div`
   overflow-y: auto;
   animation: ${slideIn} ${props => props.theme.transitions.normal} ease;
   
-  ${props => props.fullWidth && css`
+  ${props => props.$fullWidth && css`
     max-width: 90%;
   `}
   
@@ -93,7 +93,7 @@ const ModalContent = styled.div`
 const ModalActions = styled.div`
   display: flex;
   align-items: center;
-  justify-content: ${props => props.position};
+  justify-content: ${props => props.$position};
   gap: ${props => props.theme.spacing.sm};
   padding-top: ${props => props.theme.spacing.md};
   border-top: ${props => props.theme.borders.width.thin} solid ${props => props.theme.colors.border};
@@ -142,7 +142,7 @@ const Modal = ({
 
   return (
     <Overlay onClick={handleOverlayClick}>
-      <ModalContainer size={size} fullWidth={fullWidth} tabIndex={-1} {...rest}>
+      <ModalContainer $size={size} $fullWidth={fullWidth} tabIndex={-1} {...rest}>
         <ModalHeader>
           <ModalTitle>{title}</ModalTitle>
           {!hideCloseButton && (
@@ -153,7 +153,7 @@ const Modal = ({
         </ModalHeader>
         <ModalContent>{children}</ModalContent>
         {actions && (
-          <ModalActions position={actionsPosition}>
+          <ModalActions $position={actionsPosition}>
             {actions}
           </ModalActions>
         )}

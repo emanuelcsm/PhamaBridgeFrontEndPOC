@@ -17,6 +17,14 @@ const SignInContainer = styled.div`
 const SignInCard = styled(Card)`
   width: 100%;
   max-width: 450px;
+
+  /* Override any props being passed down to the DOM */
+  &&& {
+    $outlined: none;
+    $fullWidth: none;
+    $padding: none;
+    $clickable: none;
+  }
 `;
 
 const LogoContainer = styled.div`

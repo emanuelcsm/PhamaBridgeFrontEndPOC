@@ -24,6 +24,14 @@ export const StyledCard = styled(Card)`
   &:hover {
     transform: translateY(-5px);
   }
+
+  /* Override any props being passed down to the DOM */
+  &&& {
+    $outlined: none;
+    $fullWidth: none;
+    $padding: none;
+    $clickable: none;
+  }
 `;
 
 // Card icon component
@@ -38,6 +46,14 @@ export const CardIcon = styled.div`
 export const StatCard = styled(Card)`
   text-align: center;
   padding: ${props => props.theme.spacing.md};
+
+  /* Override any props being passed down to the DOM */
+  &&& {
+    $outlined: none;
+    $fullWidth: none;
+    $padding: none;
+    $clickable: none;
+  }
   margin-bottom: ${props => props.theme.spacing.md};
 `;
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import api from '../../api/api';
 import { Typography, Card } from '../common';
@@ -10,6 +10,14 @@ const TableContainer = styled(Card)`
   margin-top: ${props => props.theme.spacing.md};
   border-radius: ${props => props.theme.borders.radius};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Override any props being passed down to the DOM */
+  &&& {
+    $outlined: none;
+    $fullWidth: none;
+    $padding: none;
+    $clickable: none;
+  }
 `;
 
 const Table = styled.table`
@@ -56,6 +64,8 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
   const [pendingQuotes, setPendingQuotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const requestInProgressRef = useRef(false);
+  const hasFetchedDataRef = useRef(false);
 
   // Função para formatar o endereço completo
   const formatAddress = (address) => {
@@ -78,24 +88,33 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
     return formattedAddress;
   };
 
-  const loadPendingQuotes = async () => {
+  const loadPendingQuotes = useCallback(async () => {
+    // Previne chamadas duplicadas
+    if (requestInProgressRef.current) return;
+    
+    // Se já temos dados e não estamos forçando um refresh, não fazer nova chamada
+    if (hasFetchedDataRef.current && refreshTrigger === 0) return;
+    
+    requestInProgressRef.current = true;
     setIsLoading(true);
     setError(null);
     
     try {
       const response = await api.get('/quote/listpending');
       setPendingQuotes(response.data);
+      hasFetchedDataRef.current = true;
     } catch (err) {
       setError('Erro ao carregar cotações pendentes');
       console.error('Erro ao carregar cotações pendentes:', err);
     } finally {
       setIsLoading(false);
+      requestInProgressRef.current = false;
     }
-  };
+  }, [refreshTrigger]);
 
   useEffect(() => {
     loadPendingQuotes();
-  }, [refreshTrigger]);
+  }, [loadPendingQuotes]);
 
   if (isLoading) {
     return (

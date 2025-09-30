@@ -60,7 +60,7 @@ const MainPagePharmacy = () => {
           {hasRole(managerAdminRoles) && (
             <Tab label="Novas Cotações">
               <Typography variant="h5" style={{ marginBottom: '16px' }}>Novas Cotações Pendentes</Typography>
-              <PendingQuotesTable />
+              <PendingQuotesTable key="pending-quotes" />
             </Tab>
           )}
           

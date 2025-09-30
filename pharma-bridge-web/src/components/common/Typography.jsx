@@ -101,16 +101,16 @@ const getColorStyles = (theme, color) => {
 
 const StyledTypography = styled.div`
   margin: 0;
-  ${props => getVariantStyles(props.theme, props.variant)}
-  color: ${props => getColorStyles(props.theme, props.color)};
-  text-align: ${props => props.align};
-  font-weight: ${props => props.fontWeight && props.theme.typography.fontWeights[props.fontWeight]};
-  ${props => props.noWrap && css`
+  ${props => getVariantStyles(props.theme, props.$variant)}
+  color: ${props => getColorStyles(props.theme, props.$color)};
+  text-align: ${props => props.$align};
+  font-weight: ${props => props.$fontWeight && props.theme.typography.fontWeights[props.$fontWeight]};
+  ${props => props.$noWrap && css`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   `}
-  ${props => props.gutterBottom && css`
+  ${props => props.$gutterBottom && css`
     margin-bottom: ${props.theme.spacing.md};
   `}
 `;
@@ -151,12 +151,12 @@ const Typography = ({
   return (
     <StyledTypography
       as={getComponent()}
-      variant={variant}
-      color={color}
-      align={align}
-      fontWeight={fontWeight}
-      noWrap={noWrap}
-      gutterBottom={gutterBottom}
+      $variant={variant}
+      $color={color}
+      $align={align}
+      $fontWeight={fontWeight}
+      $noWrap={noWrap}
+      $gutterBottom={gutterBottom}
       {...rest}
     >
       {children}

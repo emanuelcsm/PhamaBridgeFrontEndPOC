@@ -17,30 +17,30 @@ const getShadowStyles = (theme, elevation) => {
 const StyledCard = styled.div`
   background-color: ${props => props.theme.colors.background};
   border-radius: ${props => props.theme.borders.radius.md};
-  padding: ${props => props.padding ? props.theme.spacing[props.padding] || props.theme.spacing.md : props.theme.spacing.md};
-  width: ${props => props.fullWidth ? '100%' : 'auto'};
-  border: ${props => props.outlined ? `${props.theme.borders.width.thin} solid ${props.theme.colors.border}` : 'none'};
-  box-shadow: ${props => !props.outlined && getShadowStyles(props.theme, props.elevation)};
+  padding: ${props => props.$padding ? props.theme.spacing[props.$padding] || props.theme.spacing.md : props.theme.spacing.md};
+  width: ${props => props.$fullWidth ? '100%' : 'auto'};
+  border: ${props => props.$outlined ? `${props.theme.borders.width.thin} solid ${props.theme.colors.border}` : 'none'};
+  box-shadow: ${props => !props.$outlined && getShadowStyles(props.theme, props.$elevation)};
   overflow: hidden;
   
-  ${props => props.clickable && css`
+  ${props => props.$clickable && css`
     cursor: pointer;
     transition: transform ${props.theme.transitions.normal}, box-shadow ${props.theme.transitions.normal};
     
     &:hover {
       transform: translateY(-2px);
-      box-shadow: ${getShadowStyles(props.theme, props.elevation + 1)};
+      box-shadow: ${getShadowStyles(props.theme, props.$elevation + 1)};
     }
   `}
 `;
 
 const CardHeader = styled.div`
-  padding: ${props => props.noPadding ? '0' : `0 0 ${props.theme.spacing.md}`};
-  margin-bottom: ${props => props.noPadding ? '0' : props.theme.spacing.md};
-  border-bottom: ${props => props.divider ? `${props.theme.borders.width.thin} solid ${props.theme.colors.border}` : 'none'};
+  padding: ${props => props.$noPadding ? '0' : `0 0 ${props.theme.spacing.md}`};
+  margin-bottom: ${props => props.$noPadding ? '0' : props.theme.spacing.md};
+  border-bottom: ${props => props.$divider ? `${props.theme.borders.width.thin} solid ${props.theme.colors.border}` : 'none'};
   display: flex;
   align-items: center;
-  justify-content: ${props => props.align || 'flex-start'};
+  justify-content: ${props => props.$align || 'flex-start'};
 `;
 
 const CardTitle = styled.h3`
@@ -57,31 +57,31 @@ const CardSubtitle = styled.h4`
 `;
 
 const CardContent = styled.div`
-  padding: ${props => props.noPadding ? '0' : `${props.theme.spacing.md} 0`};
+  padding: ${props => props.$noPadding ? '0' : `${props.theme.spacing.md} 0`};
 `;
 
 const CardActions = styled.div`
-  padding: ${props => props.noPadding ? '0' : `${props.theme.spacing.md} 0 0`};
-  margin-top: ${props => props.noPadding ? '0' : props.theme.spacing.md};
-  border-top: ${props => props.divider ? `${props.theme.borders.width.thin} solid ${props.theme.colors.border}` : 'none'};
+  padding: ${props => props.$noPadding ? '0' : `${props.theme.spacing.md} 0 0`};
+  margin-top: ${props => props.$noPadding ? '0' : props.theme.spacing.md};
+  border-top: ${props => props.$divider ? `${props.theme.borders.width.thin} solid ${props.theme.colors.border}` : 'none'};
   display: flex;
   align-items: center;
-  justify-content: ${props => props.align || 'flex-end'};
+  justify-content: ${props => props.$align || 'flex-end'};
   gap: ${props => props.theme.spacing.sm};
 `;
 
 const CardMedia = styled.div`
   width: 100%;
   position: relative;
-  height: ${props => props.height || '200px'};
-  margin: ${props => props.noPadding ? '0' : `-${props.theme.spacing.md}`};
-  margin-bottom: ${props => props.noPadding ? '0' : props.theme.spacing.md};
+  height: ${props => props.$height || '200px'};
+  margin: ${props => props.$noPadding ? '0' : `-${props.theme.spacing.md}`};
+  margin-bottom: ${props => props.$noPadding ? '0' : props.theme.spacing.md};
   overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: ${props => props.objectFit || 'cover'};
+    object-fit: ${props => props.$objectFit || 'cover'};
     display: block;
   }
 `;
@@ -99,11 +99,11 @@ const Card = ({
 }) => {
   return (
     <StyledCard
-      elevation={elevation}
-      outlined={outlined}
-      fullWidth={fullWidth}
-      padding={padding}
-      clickable={clickable}
+      $elevation={elevation}
+      $outlined={outlined}
+      $fullWidth={fullWidth}
+      $padding={padding}
+      $clickable={clickable}
       onClick={onClick}
       className={className}
       {...rest}

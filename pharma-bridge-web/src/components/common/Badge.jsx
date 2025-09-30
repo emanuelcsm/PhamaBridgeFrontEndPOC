@@ -41,19 +41,19 @@ const StyledBadge = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: ${props => props.pill ? `${props.theme.spacing.xs} ${props.theme.spacing.md}` : props.theme.spacing.xs};
+  padding: ${props => props.$pill ? `${props.theme.spacing.xs} ${props.theme.spacing.md}` : props.theme.spacing.xs};
   font-size: ${props => props.theme.typography.fontSizes.xs};
   font-weight: ${props => props.theme.typography.fontWeights.medium};
   line-height: 1;
-  border-radius: ${props => props.pill ? props.theme.borders.radius.pill : props.theme.borders.radius.sm};
+  border-radius: ${props => props.$pill ? props.theme.borders.radius.pill : props.theme.borders.radius.sm};
   white-space: nowrap;
   
-  ${props => getVariantStyles(props.theme, props.variant)}
+  ${props => getVariantStyles(props.theme, props.$variant)}
   
-  ${props => props.outlined && css`
+  ${props => props.$outlined && css`
     background-color: transparent;
-    border: ${props.theme.borders.width.thin} solid ${props.theme.colors[props.variant] || props.theme.colors.text.disabled};
-    color: ${props.theme.colors[props.variant] || props.theme.colors.text.disabled};
+    border: ${props.theme.borders.width.thin} solid ${props.theme.colors[props.$variant] || props.theme.colors.text.disabled};
+    color: ${props.theme.colors[props.$variant] || props.theme.colors.text.disabled};
   `}
 `;
 
@@ -66,9 +66,9 @@ const Badge = ({
 }) => {
   return (
     <StyledBadge
-      variant={variant}
-      outlined={outlined}
-      pill={pill}
+      $variant={variant}
+      $outlined={outlined}
+      $pill={pill}
       {...rest}
     >
       {children}

@@ -12,6 +12,14 @@ const TableContainer = styled(Card)`
   margin-top: ${props => props.theme.spacing.md};
   border-radius: ${props => props.theme.borders.radius};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  /* Override any props being passed down to the DOM */
+  &&& {
+    $outlined: none;
+    $fullWidth: none;
+    $padding: none;
+    $clickable: none;
+  }
 `;
 
 const Table = styled.table`

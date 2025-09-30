@@ -18,6 +18,14 @@ const RegisterCard = styled(Card)`
   width: 100%;
   max-width: 800px;
   box-shadow: ${props => props.theme.shadows.lg};
+
+  /* Override any props being passed down to the DOM */
+  &&& {
+    $outlined: none;
+    $fullWidth: none;
+    $padding: none;
+    $clickable: none;
+  }
 `;
 
 const FormHeader = styled.div`

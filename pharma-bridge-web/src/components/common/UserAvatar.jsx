@@ -13,7 +13,7 @@ const StyledAvatar = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: ${props => props.variant === 'pharmacy' 
+  background-color: ${props => props.$variant === 'pharmacy' 
     ? props.theme.colors.secondary 
     : props.theme.colors.accent};
   display: flex;
@@ -40,9 +40,9 @@ const DropdownMenu = styled.div`
   width: 180px;
   z-index: 1000;
   overflow: hidden;
-  opacity: ${props => props.isOpen ? 1 : 0};
-  visibility: ${props => props.isOpen ? 'visible' : 'hidden'};
-  transform: ${props => props.isOpen ? 'translateY(0)' : 'translateY(-10px)'};
+  opacity: ${props => props.$isOpen ? 1 : 0};
+  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  transform: ${props => props.$isOpen ? 'translateY(0)' : 'translateY(-10px)'};
   transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
 `;
 
@@ -126,14 +126,14 @@ const UserAvatar = ({ variant = 'user', initials }) => {
   return (
     <AvatarContainer>
       <StyledAvatar 
-        variant={variant} 
+        $variant={variant} 
         onClick={toggleMenu} 
         ref={avatarRef}
       >
         {initials}
       </StyledAvatar>
       
-      <DropdownMenu isOpen={isMenuOpen} ref={menuRef}>
+      <DropdownMenu $isOpen={isMenuOpen} ref={menuRef}>
         <MenuItem onClick={handleSecurityClick}>
           <MenuItemIcon>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
