@@ -4,6 +4,9 @@ import api from '../../api/api';
 import { Typography, Card } from '../common';
 import { formatDate } from '../../utils/dateUtils';
 
+// Flag global para controlar chamadas duplicadas em Strict Mode
+const apiCallInProgress = {};
+
 const TableContainer = styled(Card)`
   width: 100%;
   overflow-x: auto;
@@ -64,7 +67,7 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
   const [pendingQuotes, setPendingQuotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const requestInProgressRef = useRef(false);
+  const componentIdRef = useRef(`quotes-${Math.random().toString(36).substr(2, 9)}`);
   const hasFetchedDataRef = useRef(false);
 
   // Função para formatar o endereço completo
@@ -89,18 +92,28 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
   };
 
   const loadPendingQuotes = useCallback(async () => {
-    // Previne chamadas duplicadas
-    if (requestInProgressRef.current) return;
+    const componentId = componentIdRef.current;
+    
+    // Previne chamadas duplicadas em modo estrito
+    if (apiCallInProgress[componentId]) {
+      return;
+    }
     
     // Se já temos dados e não estamos forçando um refresh, não fazer nova chamada
-    if (hasFetchedDataRef.current && refreshTrigger === 0) return;
+    if (hasFetchedDataRef.current && refreshTrigger === 0) {
+      return;
+    }
     
-    requestInProgressRef.current = true;
+    // Marca que uma chamada está em andamento para este componente
+    apiCallInProgress[componentId] = true;
+    
     setIsLoading(true);
     setError(null);
     
     try {
+      console.log(`Iniciando chamada API para ${componentId}`);
       const response = await api.get('/quote/listpending');
+      console.log(`Chamada API concluída para ${componentId}`);
       setPendingQuotes(response.data);
       hasFetchedDataRef.current = true;
     } catch (err) {
@@ -108,12 +121,21 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
       console.error('Erro ao carregar cotações pendentes:', err);
     } finally {
       setIsLoading(false);
-      requestInProgressRef.current = false;
+      // Libera a flag após a conclusão
+      apiCallInProgress[componentId] = false;
     }
   }, [refreshTrigger]);
 
   useEffect(() => {
+    // Limpeza ao desmontar o componente
+    const componentId = componentIdRef.current;
+    
     loadPendingQuotes();
+    
+    return () => {
+      // Garante que chamadas futuras não serão bloqueadas se este componente for desmontado
+      delete apiCallInProgress[componentId];
+    };
   }, [loadPendingQuotes]);
 
   if (isLoading) {
