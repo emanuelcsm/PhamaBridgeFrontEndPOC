@@ -7,7 +7,7 @@ const InputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: ${props => props.theme.spacing.md};
-  width: ${props => props.fullWidth ? '100%' : 'auto'};
+  width: ${props => props.$fullWidth ? '100%' : 'auto'};
 `;
 
 const Label = styled.label`
@@ -75,17 +75,17 @@ const getInputVariantStyles = (theme, variant, error) => {
 const StyledInput = styled.input`
   padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   font-size: ${props => props.theme.typography.fontSizes.md};
-  border-radius: ${props => props.variant === 'underlined' ? '0' : props.theme.borders.radius.md};
+  border-radius: ${props => props.$variant === 'underlined' ? '0' : props.theme.borders.radius.md};
   width: 100%;
   transition: all ${props => props.theme.transitions.normal};
   font-family: ${props => props.theme.typography.fontFamily.primary};
   color: ${props => props.theme.colors.text.primary};
   
-  ${props => props.startIcon && `
+  ${props => props.$startIcon && `
     padding-left: ${props.theme.spacing.xl};
   `}
   
-  ${props => getInputVariantStyles(props.theme, props.variant, props.error)}
+  ${props => getInputVariantStyles(props.theme, props.$variant, props.$error)}
   
   &:disabled {
     opacity: 0.6;
@@ -101,7 +101,7 @@ const StyledInput = styled.input`
 const HelperText = styled.span`
   font-size: ${props => props.theme.typography.fontSizes.xs};
   margin-top: ${props => props.theme.spacing.xs};
-  color: ${props => props.error ? props.theme.colors.error : props.theme.colors.text.secondary};
+  color: ${props => props.$error ? props.theme.colors.error : props.theme.colors.text.secondary};
 `;
 
 const Input = forwardRef(({
@@ -114,19 +114,19 @@ const Input = forwardRef(({
   ...rest
 }, ref) => {
   return (
-    <InputWrapper fullWidth={fullWidth}>
+    <InputWrapper $fullWidth={fullWidth}>
       {label && <Label>{label}</Label>}
       <InputContainer>
         {startIcon && <IconWrapper>{startIcon}</IconWrapper>}
         <StyledInput
           ref={ref}
-          variant={variant}
-          error={error}
-          startIcon={startIcon}
+          $variant={variant}
+          $error={error}
+          $startIcon={startIcon}
           {...rest}
         />
       </InputContainer>
-      {helperText && <HelperText error={error}>{helperText}</HelperText>}
+      {helperText && <HelperText $error={error}>{helperText}</HelperText>}
     </InputWrapper>
   );
 });

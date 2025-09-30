@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import api from '../../api/api';
 import { Button, Typography, Card } from '../common';
 import useConfirm from '../../hooks/useConfirm';
 import { useAlert } from '../../contexts/AlertContext';
 import { formatDate } from '../../utils/dateUtils';
+
+// Cache para evitar chamadas duplicadas à API
+let pendingFetch = null;
 
 const TableContainer = styled(Card)`
   width: 100%;
@@ -85,29 +88,51 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
   const [statusFilter, setStatusFilter] = useState("");
   const { confirm, confirmDialog } = useConfirm();
   const { info } = useAlert();
+  const dataFetchedRef = useRef(false);
 
-  const loadQuotes = async () => {
-    setIsLoading(true);
-    setError(null);
+  useEffect(() => {
+    // Se já buscamos dados e não há refresh, não faça nada
+    if (dataFetchedRef.current && refreshTrigger === 0) {
+      return;
+    }
     
-    try {
+    // Evita chamadas duplicadas reusando a Promise existente
+    const fetchData = async () => {
+      // Se já existe uma requisição em andamento, retorna ela
+      if (pendingFetch) {
+        return pendingFetch;
+      }
+      
+      setIsLoading(true);
+      setError(null);
+      
       let url = '/quote/list';
       if (statusFilter) {
         url += `?status=${statusFilter}`;
       }
       
-      const response = await api.get(url);
-      setQuotes(response.data);
-    } catch (err) {
-      setError('Erro ao carregar cotações');
-      console.error('Erro ao carregar cotações:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadQuotes();
+      // Cria uma nova Promise e armazena para possível reuso
+      pendingFetch = api.get(url)
+        .then(response => {
+          setQuotes(response.data);
+          dataFetchedRef.current = true;
+          return response;
+        })
+        .catch(err => {
+          setError('Erro ao carregar cotações');
+          console.error('Erro ao carregar cotações:', err);
+          throw err;
+        })
+        .finally(() => {
+          setIsLoading(false);
+          // Limpa a referência após a conclusão
+          pendingFetch = null;
+        });
+      
+      return pendingFetch;
+    };
+    
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, refreshTrigger]);
 
@@ -130,8 +155,10 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
       setIsLoading(true);
       try {
         await api.post(`/quote/${quoteId}/cancel`);
-        // Atualizar a lista após o cancelamento
-        loadQuotes();
+        // Resetar o cache para forçar nova busca
+        dataFetchedRef.current = false;
+        // Forçar nova requisição atualizando o estado
+        setStatusFilter(prevFilter => prevFilter); // Isso vai disparar o efeito
       } catch (err) {
         setError('Erro ao cancelar cotação');
         console.error('Erro ao cancelar cotação:', err);

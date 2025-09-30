@@ -75,14 +75,14 @@ const StyledButton = styled.button`
   align-items: center;
   justify-content: center;
   font-weight: ${props => props.theme.typography.fontWeights.medium};
-  border-radius: ${props => props.round ? props.theme.borders.radius.pill : props.theme.borders.radius.md};
+  border-radius: ${props => props.$round ? props.theme.borders.radius.pill : props.theme.borders.radius.md};
   transition: all ${props => props.theme.transitions.normal};
   cursor: pointer;
   
-  ${props => getVariantStyles(props.theme, props.variant)}
-  ${props => getSizeStyles(props.theme, props.size)}
+  ${props => getVariantStyles(props.theme, props.$variant)}
+  ${props => getSizeStyles(props.theme, props.$size)}
   
-  width: ${props => props.fullWidth ? '100%' : 'auto'};
+  width: ${props => props.$fullWidth ? '100%' : 'auto'};
   
   &:disabled {
     opacity: 0.6;
@@ -90,9 +90,9 @@ const StyledButton = styled.button`
   }
   
   svg {
-    margin-right: ${props => props.iconOnly ? '0' : props.theme.spacing.xs};
-    width: ${props => props.size === 'small' ? '16px' : props.size === 'large' ? '24px' : '20px'};
-    height: ${props => props.size === 'small' ? '16px' : props.size === 'large' ? '24px' : '20px'};
+    margin-right: ${props => props.$iconOnly ? '0' : props.theme.spacing.xs};
+    width: ${props => props.$size === 'small' ? '16px' : props.$size === 'large' ? '24px' : '20px'};
+    height: ${props => props.$size === 'small' ? '16px' : props.$size === 'large' ? '24px' : '20px'};
   }
 `;
 
@@ -112,11 +112,11 @@ const Button = ({
   return (
     <StyledButton
       type={type}
-      variant={variant}
-      size={size}
+      $variant={variant}
+      $size={size}
       disabled={disabled}
-      fullWidth={fullWidth}
-      round={round}
+      $fullWidth={fullWidth}
+      $round={round}
       $iconOnly={iconOnly}
       onClick={onClick}
       {...rest}
