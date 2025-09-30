@@ -117,7 +117,7 @@ const Button = ({
       disabled={disabled}
       fullWidth={fullWidth}
       round={round}
-      iconOnly={iconOnly}
+      $iconOnly={iconOnly}
       onClick={onClick}
       {...rest}
     >

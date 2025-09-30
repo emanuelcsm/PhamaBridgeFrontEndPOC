@@ -7,6 +7,30 @@ const api = axios.create({
   },
 });
 
+/**
+ * Função específica para buscar dados binários como imagens ou arquivos
+ * @param {string} url - URL relativa para a API (sem baseURL)
+ * @param {Object} options - Opções adicionais para a requisição
+ * @returns {Promise<Blob>} - Retorna uma Promise que resolve com um blob
+ */
+api.getBlob = async (url, options = {}) => {
+  try {
+    // Usando axios diretamente para evitar conflitos com a instância personalizada
+    const response = await axios.get(`${api.defaults.baseURL}${url}`, {
+      ...options,
+      responseType: 'blob',
+      headers: {
+        ...options.headers,
+        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching blob data:', error);
+    throw error;
+  }
+};
+
 // Add a request interceptor to include the auth token in headers
 api.interceptors.request.use(
   (config) => {
