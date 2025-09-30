@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import api from '../../api/api';
 import { Typography, Card } from '../common';
 import { formatDate } from '../../utils/dateUtils';
 
-// Flag global para controlar chamadas duplicadas em Strict Mode
-const apiCallInProgress = {};
+// Cache para evitar chamadas duplicadas à API
+let pendingFetch = null;
 
 const TableContainer = styled(Card)`
   width: 100%;
@@ -67,8 +67,7 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
   const [pendingQuotes, setPendingQuotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const componentIdRef = useRef(`quotes-${Math.random().toString(36).substr(2, 9)}`);
-  const hasFetchedDataRef = useRef(false);
+  const dataFetchedRef = useRef(false);
 
   // Função para formatar o endereço completo
   const formatAddress = (address) => {
@@ -91,52 +90,45 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
     return formattedAddress;
   };
 
-  const loadPendingQuotes = useCallback(async () => {
-    const componentId = componentIdRef.current;
-    
-    // Previne chamadas duplicadas em modo estrito
-    if (apiCallInProgress[componentId]) {
-      return;
-    }
-    
-    // Se já temos dados e não estamos forçando um refresh, não fazer nova chamada
-    if (hasFetchedDataRef.current && refreshTrigger === 0) {
-      return;
-    }
-    
-    // Marca que uma chamada está em andamento para este componente
-    apiCallInProgress[componentId] = true;
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      console.log(`Iniciando chamada API para ${componentId}`);
-      const response = await api.get('/quote/listpending');
-      console.log(`Chamada API concluída para ${componentId}`);
-      setPendingQuotes(response.data);
-      hasFetchedDataRef.current = true;
-    } catch (err) {
-      setError('Erro ao carregar cotações pendentes');
-      console.error('Erro ao carregar cotações pendentes:', err);
-    } finally {
-      setIsLoading(false);
-      // Libera a flag após a conclusão
-      apiCallInProgress[componentId] = false;
-    }
-  }, [refreshTrigger]);
-
   useEffect(() => {
-    // Limpeza ao desmontar o componente
-    const componentId = componentIdRef.current;
+    // Se já buscamos dados e não há refresh, não faça nada
+    if (dataFetchedRef.current && refreshTrigger === 0) {
+      return;
+    }
     
-    loadPendingQuotes();
-    
-    return () => {
-      // Garante que chamadas futuras não serão bloqueadas se este componente for desmontado
-      delete apiCallInProgress[componentId];
+    // Evita chamadas duplicadas reusando a Promise existente
+    const fetchData = async () => {
+      // Se já existe uma requisição em andamento, retorna ela
+      if (pendingFetch) {
+        return pendingFetch;
+      }
+      
+      setIsLoading(true);
+      setError(null);
+      
+      // Cria uma nova Promise e armazena para possível reuso
+      pendingFetch = api.get('/quote/listpending')
+        .then(response => {
+          setPendingQuotes(response.data);
+          dataFetchedRef.current = true;
+          return response;
+        })
+        .catch(err => {
+          setError('Erro ao carregar cotações pendentes');
+          console.error('Erro ao carregar cotações pendentes:', err);
+          throw err;
+        })
+        .finally(() => {
+          setIsLoading(false);
+          // Limpa a referência após a conclusão
+          pendingFetch = null;
+        });
+      
+      return pendingFetch;
     };
-  }, [loadPendingQuotes]);
+    
+    fetchData();
+  }, [refreshTrigger]);
 
   if (isLoading) {
     return (
