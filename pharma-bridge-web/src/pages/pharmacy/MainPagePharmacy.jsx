@@ -5,7 +5,8 @@ import {
   LogoImage,
   UserNameDisplay,
   TabContainer,
-  Tab
+  Tab,
+  Typography
 } from '../../components/common';
 import { 
   PageContainer, 
@@ -15,6 +16,7 @@ import {
   Content,
   Logo
 } from '../../components/styled';
+import PendingQuotesTable from '../../components/pharmacy/PendingQuotesTable';
 
 const MainPagePharmacy = () => {
   const { user } = useAuth();
@@ -57,7 +59,8 @@ const MainPagePharmacy = () => {
         <TabContainer activeTab={activeTab} onChange={setActiveTab}>
           {hasRole(managerAdminRoles) && (
             <Tab label="Novas Cotações">
-              {/* Conteúdo para Novas Cotações ficará aqui */}
+              <Typography variant="h5" style={{ marginBottom: '16px' }}>Novas Cotações Pendentes</Typography>
+              <PendingQuotesTable />
             </Tab>
           )}
           
