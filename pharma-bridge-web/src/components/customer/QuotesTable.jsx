@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import api from '../../api/api';
 import { Button, Typography, Card } from '../common';
+import useConfirm from '../../hooks/useConfirm';
+import { useAlert } from '../../contexts/AlertContext';
 import { formatDate } from '../../utils/dateUtils';
 
 const TableContainer = styled(Card)`
@@ -73,6 +75,8 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
+  const { confirm, confirmDialog } = useConfirm();
+  const { info } = useAlert();
 
   const loadQuotes = async () => {
     setIsLoading(true);
@@ -101,14 +105,23 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
 
   const handleShowDetails = (quoteId) => {
     // Implementar lógica para exibir detalhes da cotação
-    alert(`Detalhes da cotação ${quoteId}`);
+    info(`Detalhes da cotação ${quoteId}`);
   };
 
   const handleCancelQuote = async (quoteId) => {
-    if (window.confirm('Tem certeza que deseja cancelar esta cotação?')) {
+    const confirmed = await confirm(
+      'Tem certeza que deseja cancelar esta cotação?', 
+      { 
+        title: 'Cancelar Cotação', 
+        confirmButtonText: 'Sim, cancelar', 
+        confirmButtonVariant: 'error' 
+      }
+    );
+    
+    if (confirmed) {
       setIsLoading(true);
       try {
-        await api.post(`/quote/cancel/${quoteId}`);
+        await api.post(`/quote/${quoteId}/cancel`);
         // Atualizar a lista após o cancelamento
         loadQuotes();
       } catch (err) {
@@ -179,6 +192,8 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
                     {quote.status === 'Pending' && 'Pendente'}
                     {quote.status === 'Accepted' && 'Aceita'}
                     {quote.status === 'Canceled' && 'Cancelada'}
+                    {quote.status && !['Pending', 'Accepted', 'Canceled'].includes(quote.status) && 'Desconhecido'}
+                    {!quote.status && 'Indefinido'}
                   </TableCell>
                   <TableCell>
                     <ActionButtonsContainer>
@@ -212,6 +227,7 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
           </NoDataContainer>
         )}
       </TableContainer>
+      {confirmDialog}
     </div>
   );
 };

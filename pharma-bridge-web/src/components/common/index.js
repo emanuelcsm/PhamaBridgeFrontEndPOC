@@ -5,9 +5,11 @@ import Button from './Button';
 import Input from './Input';
 import Card from './Card';
 import Alert from './Alert';
+import AlertDialog from './AlertDialog';
 import Badge from './Badge';
 import Grid from './Grid';
 import Typography from './Typography';
+import ConfirmDialog from './ConfirmDialog';
 import { Modal, Modal2 } from './Modal';
 import UserAvatar from './UserAvatar';
 import LogoImage from './LogoImage';
@@ -21,6 +23,7 @@ export {
   Input,
   Card,
   Alert,
+  AlertDialog,
   Badge,
   Grid,
   Typography,
@@ -33,5 +36,6 @@ export {
   ZipCodeInput,
   UserNameDisplay,
   TabContainer,
-  Tab
+  Tab,
+  ConfirmDialog
 };

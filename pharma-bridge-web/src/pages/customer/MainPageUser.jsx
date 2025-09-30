@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../AuthContext';
+import { useAlert } from '../../contexts/AlertContext';
 import styled from 'styled-components';
 import api from '../../api/api';
 import { 
@@ -81,13 +82,14 @@ const FileName = styled(Typography)`
 
 const MainPageUser = () => {
   const { user } = useAuth();
+  const { success, error } = useAlert();
   
   // Estados para controle dos modais e formulários
   const [isFileModalOpen, setFileModalOpen] = useState(false);
   const [isItemsModalOpen, setItemsModalOpen] = useState(false);
   const [isAddressModalOpen, setAddressModalOpen] = useState(false);
   const [prescriptionFile, setPrescriptionFile] = useState(null);
-  const [items, setItems] = useState([{ Formula: '', Observation: '' }]);
+  const [items, setItems] = useState([]);
   const [currentItem, setCurrentItem] = useState({ Formula: '', Observation: '' });
   const [editingIndex, setEditingIndex] = useState(-1);
   const [refreshQuotes, setRefreshQuotes] = useState(0);
@@ -199,7 +201,7 @@ const MainPageUser = () => {
       // Reset dos estados após sucesso
       setAddressModalOpen(false);
       setPrescriptionFile(null);
-      setItems([{ Formula: '', Observation: '' }]);
+      setItems([]);
       setAddress({
         street: '',
         number: '',
@@ -214,11 +216,11 @@ const MainPageUser = () => {
       // Atualiza a tabela de cotações
       setRefreshQuotes(prev => prev + 1);
       
-      // Exibe uma mensagem de sucesso (você pode implementar um componente de alerta)
-      alert('Cotação enviada com sucesso!');
-    } catch (error) {
-      console.error('Erro ao enviar cotação:', error);
-      alert('Erro ao enviar cotação. Tente novamente.');
+      // Exibe uma mensagem de sucesso usando o componente de alerta
+      success('Cotação enviada com sucesso!');
+    } catch (err) {
+      console.error('Erro ao enviar cotação:', err);
+      error('Erro ao enviar cotação. Tente novamente.');
     } finally {
       setIsLoading(false);
     }
@@ -351,7 +353,7 @@ const MainPageUser = () => {
           <FormGroup>
             <Input
               label="Fórmula"
-              placeholder="Ex: 5Kg Dipirona + 30Kg Phormol"
+              placeholder=""
               value={currentItem.Formula}
               onChange={(e) => handleItemChange('Formula', e.target.value)}
               fullWidth

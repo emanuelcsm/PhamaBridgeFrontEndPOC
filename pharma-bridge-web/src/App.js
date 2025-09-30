@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
+import { AlertProvider } from './contexts/AlertContext';
 import ThemeProvider from './theme/ThemeProvider';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -17,8 +18,9 @@ function App() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <Router>
-          <Routes>
+        <AlertProvider>
+          <Router>
+            <Routes>
             {/* Rota pública de SignIn */}
             <Route path="/signin" element={<ProtectedRoute requiresAuth={false} />}>
               <Route index element={<SignIn />} />
@@ -53,7 +55,8 @@ function App() {
             {/* Rota catch-all para URLs desconhecidas */}
             <Route path="*" element={<Navigate to="/signin" replace />} />
           </Routes>
-        </Router>
+          </Router>
+        </AlertProvider>
       </ThemeProvider>
     </AuthProvider>
   );
