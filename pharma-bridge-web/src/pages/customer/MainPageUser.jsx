@@ -15,6 +15,7 @@ import {
   Input,
   PhoneInput,
   ZipCodeInput,
+  DecimalInput,
   TabContainer,
   Tab
 } from '../../components/common';
@@ -96,10 +97,26 @@ const MainPageUser = () => {
   const [isFileModalOpen, setFileModalOpen] = useState(false);
   const [isItemsModalOpen, setItemsModalOpen] = useState(false);
   const [isAddressModalOpen, setAddressModalOpen] = useState(false);
+  const [isComponentModalOpen, setComponentModalOpen] = useState(false);
   const [prescriptionFile, setPrescriptionFile] = useState(null);
   const [items, setItems] = useState([]);
-  const [currentItem, setCurrentItem] = useState({ Formula: '', Observation: '' });
+  const [currentItem, setCurrentItem] = useState({ 
+    Formula: '', 
+    PharmaceuticalForm: 'Cápsula',
+    ConcentrationValue: 1,
+    ConcentrationUnit: 'mg',
+    TotalQuantity: 30,
+    QuantityUnit: 'unidades',
+    Observation: '',
+    additionalComponents: []
+  });
+  const [currentComponent, setCurrentComponent] = useState({
+    ActiveIngredientName: '',
+    ConcentrationValue: 0.5,
+    ConcentrationUnit: 'mg'
+  });
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [editingComponentIndex, setEditingComponentIndex] = useState(-1);
   const [refreshQuotes, setRefreshQuotes] = useState(0);
   const [address, setAddress] = useState({
     street: '',
@@ -149,7 +166,16 @@ const MainPageUser = () => {
         // Modo de adição
         setItems([...items, currentItem]);
       }
-      setCurrentItem({ Formula: '', Observation: '' });
+      setCurrentItem({ 
+        Formula: '', 
+        PharmaceuticalForm: 'Cápsula',
+        ConcentrationValue: 1,
+        ConcentrationUnit: 'mg',
+        TotalQuantity: 30,
+        QuantityUnit: 'unidades',
+        Observation: '',
+        additionalComponents: [] 
+      });
     }
   };
 
@@ -161,6 +187,81 @@ const MainPageUser = () => {
   const handleRemoveItem = (index) => {
     const updatedItems = items.filter((_, i) => i !== index);
     setItems(updatedItems);
+  };
+
+  // Gerenciamento de componentes adicionais
+  const handleComponentChange = (field, value) => {
+    setCurrentComponent(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleOpenComponentModal = (itemIndex) => {
+    setEditingIndex(itemIndex);
+    setComponentModalOpen(true);
+  };
+
+  const handleAddComponent = () => {
+    if (currentComponent.ActiveIngredientName.trim()) {
+      if (editingComponentIndex >= 0) {
+        // Edição de um componente existente
+        const updatedItems = [...items];
+        const itemComponents = [...updatedItems[editingIndex].additionalComponents];
+        itemComponents[editingComponentIndex] = { ...currentComponent };
+        updatedItems[editingIndex] = {
+          ...updatedItems[editingIndex],
+          additionalComponents: itemComponents
+        };
+        setItems(updatedItems);
+        setEditingComponentIndex(-1);
+      } else {
+        // Adição de novo componente
+        const updatedItems = [...items];
+        const itemComponents = updatedItems[editingIndex].additionalComponents || [];
+        updatedItems[editingIndex] = {
+          ...updatedItems[editingIndex],
+          additionalComponents: [...itemComponents, { ...currentComponent }]
+        };
+        setItems(updatedItems);
+      }
+      
+      // Resetar o componente atual
+      setCurrentComponent({
+        ActiveIngredientName: '',
+        ConcentrationValue: 0.5,
+        ConcentrationUnit: 'mg'
+      });
+    }
+  };
+
+  const handleEditComponent = (componentIndex) => {
+    if (items[editingIndex] && items[editingIndex].additionalComponents) {
+      const component = items[editingIndex].additionalComponents[componentIndex];
+      setCurrentComponent({ ...component });
+      setEditingComponentIndex(componentIndex);
+    }
+  };
+
+  const handleRemoveComponent = (componentIndex) => {
+    if (items[editingIndex] && items[editingIndex].additionalComponents) {
+      const updatedItems = [...items];
+      const updatedComponents = updatedItems[editingIndex].additionalComponents.filter(
+        (_, i) => i !== componentIndex
+      );
+      updatedItems[editingIndex] = {
+        ...updatedItems[editingIndex],
+        additionalComponents: updatedComponents
+      };
+      setItems(updatedItems);
+    }
+  };
+
+  const handleComponentsModalClose = () => {
+    setComponentModalOpen(false);
+    setCurrentComponent({
+      ActiveIngredientName: '',
+      ConcentrationValue: 0.5,
+      ConcentrationUnit: 'mg'
+    });
+    setEditingComponentIndex(-1);
   };
 
   const handleItemsContinue = () => {
@@ -180,24 +281,43 @@ const MainPageUser = () => {
     try {
       const formData = new FormData();
       
-      // Adiciona os itens da receita
+      // Adiciona os itens da receita conforme novo esquema
       items.forEach((item, index) => {
-        formData.append(`Items[${index}].Formula`, item.Formula);
-        formData.append(`Items[${index}].Observation`, item.Observation);
+        formData.append(`Items[${index}].MainCompoundName`, item.Formula);
+        formData.append(`Items[${index}].PharmaceuticalForm`, item.PharmaceuticalForm || 'Cápsula');
+        formData.append(`Items[${index}].ConcentrationValue`, item.ConcentrationValue || 1);
+        formData.append(`Items[${index}].ConcentrationUnit`, item.ConcentrationUnit || 'mg');
+        formData.append(`Items[${index}].TotalQuantity`, item.TotalQuantity || 30);
+        formData.append(`Items[${index}].QuantityUnit`, item.QuantityUnit || 'unidades');
+        formData.append(`Items[${index}].Observation`, item.Observation || '');
+        
+        // Se houver componentes adicionais
+        if (item.additionalComponents && item.additionalComponents.length > 0) {
+          item.additionalComponents.forEach((comp, compIndex) => {
+            formData.append(`Items[${index}].additionalComponents[${compIndex}].activeIngredientName`, comp.ActiveIngredientName);
+            formData.append(`Items[${index}].additionalComponents[${compIndex}].concentrationValue`, comp.ConcentrationValue);
+            formData.append(`Items[${index}].additionalComponents[${compIndex}].concentrationUnit`, comp.ConcentrationUnit);
+          });
+        }
       });
       
       // Adiciona a imagem da receita
       formData.append('PrescriptionImage', prescriptionFile);
       
       // Adiciona os dados do endereço
-      formData.append('street', address.street);
-      formData.append('number', address.number);
-      formData.append('complement', address.complement);
-      formData.append('neighborhood', address.neighborhood);
-      formData.append('city', address.city);
-      formData.append('state', address.state);
-      formData.append('zipCode', address.zipCode);
-      formData.append('phoneNumber', address.phoneNumber);
+      formData.append('Street', address.street);
+      formData.append('Number', address.number);
+      formData.append('Complement', address.complement);
+      formData.append('Neighborhood', address.neighborhood);
+      formData.append('City', address.city);
+      formData.append('State', address.state);
+      formData.append('ZipCode', address.zipCode);
+      formData.append('PhoneNumber', address.phoneNumber);
+      
+      // Dados do médico/emissor (usando valores padrão)
+      formData.append('DoctorName', 'Dr. Exemplo');
+      formData.append('RegistrationNumber', '123456');
+      formData.append('RegistrationState', 'SP');
       
       // Envia a requisição
       await api.post('/quote/create', formData, {
@@ -360,13 +480,77 @@ const MainPageUser = () => {
           
           <FormGroup>
             <Input
-              label="Fórmula"
-              placeholder=""
+              label="Nome do Composto Principal"
+              placeholder="Ex: Metformina"
               value={currentItem.Formula}
               onChange={(e) => handleItemChange('Formula', e.target.value)}
               fullWidth
             />
           </FormGroup>
+          
+          <Grid.Row>
+            <Grid.Col size={6}>
+              <FormGroup>
+                <Input
+                  label="Forma Farmacêutica"
+                  placeholder="Ex: Cápsula"
+                  value={currentItem.PharmaceuticalForm}
+                  onChange={(e) => handleItemChange('PharmaceuticalForm', e.target.value)}
+                  fullWidth
+                />
+              </FormGroup>
+            </Grid.Col>
+            <Grid.Col size={3}>
+              <FormGroup>
+                <DecimalInput
+                  label="Concentração"
+                  placeholder="Ex: 500,00"
+                  value={currentItem.ConcentrationValue}
+                  onChange={(e) => handleItemChange('ConcentrationValue', e.target.value)}
+                  decimalPlaces={2}
+                  min={0.01}
+                  fullWidth
+                />
+              </FormGroup>
+            </Grid.Col>
+            <Grid.Col size={3}>
+              <FormGroup>
+                <Input
+                  label="Unidade"
+                  placeholder="Ex: mg"
+                  value={currentItem.ConcentrationUnit}
+                  onChange={(e) => handleItemChange('ConcentrationUnit', e.target.value)}
+                  fullWidth
+                />
+              </FormGroup>
+            </Grid.Col>
+          </Grid.Row>
+          
+          <Grid.Row>
+            <Grid.Col size={6}>
+              <FormGroup>
+                <Input
+                  label="Quantidade Total"
+                  type="number"
+                  placeholder="Ex: 30"
+                  value={currentItem.TotalQuantity}
+                  onChange={(e) => handleItemChange('TotalQuantity', parseInt(e.target.value) || 0)}
+                  fullWidth
+                />
+              </FormGroup>
+            </Grid.Col>
+            <Grid.Col size={6}>
+              <FormGroup>
+                <Input
+                  label="Unidade de Quantidade"
+                  placeholder="Ex: unidades"
+                  value={currentItem.QuantityUnit}
+                  onChange={(e) => handleItemChange('QuantityUnit', e.target.value)}
+                  fullWidth
+                />
+              </FormGroup>
+            </Grid.Col>
+          </Grid.Row>
           
           <FormGroup>
             <Input
@@ -378,12 +562,28 @@ const MainPageUser = () => {
             />
           </FormGroup>
           
-          <Button 
-            variant="secondary"
-            onClick={handleAddItem}
-          >
-            {editingIndex >= 0 ? 'Atualizar Item' : 'Adicionar Item'}
-          </Button>
+          <Grid.Row>
+            <Grid.Col size={6}>
+              <Button 
+                variant="secondary"
+                onClick={handleAddItem}
+                fullWidth
+              >
+                {editingIndex >= 0 ? 'Atualizar Item' : 'Adicionar Item'}
+              </Button>
+            </Grid.Col>
+            {editingIndex >= 0 && (
+              <Grid.Col size={6}>
+                <Button 
+                  variant="primary"
+                  onClick={() => setComponentModalOpen(true)}
+                  fullWidth
+                >
+                  Gerenciar Componentes Adicionais
+                </Button>
+              </Grid.Col>
+            )}
+          </Grid.Row>
           
           {items.length > 0 && (
             <ItemsList>
@@ -394,11 +594,30 @@ const MainPageUser = () => {
               {items.map((item, index) => (
                 <ItemCard key={index}>
                   <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                    Fórmula: {item.Formula}
+                    {item.Formula} - {item.ConcentrationValue}{item.ConcentrationUnit}
                   </Typography>
                   <Typography variant="body2">
-                    Observação: {item.Observation || 'Nenhuma observação'}
+                    Forma: {item.PharmaceuticalForm} | Quantidade: {item.TotalQuantity} {item.QuantityUnit}
                   </Typography>
+                  {item.Observation && (
+                    <Typography variant="body2">
+                      Observação: {item.Observation}
+                    </Typography>
+                  )}
+                  
+                  {item.additionalComponents && item.additionalComponents.length > 0 && (
+                    <div style={{ marginTop: '8px' }}>
+                      <Typography variant="body2" style={{ fontWeight: 'bold' }}>
+                        Componentes Adicionais:
+                      </Typography>
+                      {item.additionalComponents.map((comp, idx) => (
+                        <Typography key={idx} variant="body2">
+                          • {comp.ActiveIngredientName} - {comp.ConcentrationValue} {comp.ConcentrationUnit}
+                        </Typography>
+                      ))}
+                    </div>
+                  )}
+                  
                   <ItemActions>
                     <Button 
                       variant="text" 
@@ -407,6 +626,15 @@ const MainPageUser = () => {
                     >
                       Editar
                     </Button>
+                    {item.additionalComponents && (
+                      <Button 
+                        variant="secondary" 
+                        size="small" 
+                        onClick={() => handleOpenComponentModal(index)}
+                      >
+                        Componentes
+                      </Button>
+                    )}
                     <Button 
                       variant="error" 
                       size="small" 
@@ -430,6 +658,108 @@ const MainPageUser = () => {
               disabled={items.length === 0}
             >
               Continuar
+            </Button>
+          </Modal.Actions>
+        </Modal>
+        
+        {/* Modal para gerenciar componentes adicionais */}
+        <Modal
+          isOpen={isComponentModalOpen}
+          title="Componentes Adicionais"
+          onClose={handleComponentsModalClose}
+          size="md"
+        >
+          <Typography variant="body1" style={{ marginBottom: '16px' }}>
+            Adicione componentes ativos adicionais a este item.
+          </Typography>
+          
+          <FormGroup>
+            <Input
+              label="Nome do Ingrediente Ativo"
+              placeholder="Ex: Vitamina C"
+              value={currentComponent.ActiveIngredientName}
+              onChange={(e) => handleComponentChange('ActiveIngredientName', e.target.value)}
+              fullWidth
+            />
+          </FormGroup>
+          
+          <Grid.Row>
+            <Grid.Col size={6}>
+              <FormGroup>
+                <DecimalInput
+                  label="Concentração"
+                  placeholder="Ex: 0,50"
+                  value={currentComponent.ConcentrationValue}
+                  onChange={(e) => handleComponentChange('ConcentrationValue', e.target.value)}
+                  decimalPlaces={2}
+                  min={0.01}
+                  fullWidth
+                />
+              </FormGroup>
+            </Grid.Col>
+            <Grid.Col size={6}>
+              <FormGroup>
+                <Input
+                  label="Unidade"
+                  placeholder="Ex: mg"
+                  value={currentComponent.ConcentrationUnit}
+                  onChange={(e) => handleComponentChange('ConcentrationUnit', e.target.value)}
+                  fullWidth
+                />
+              </FormGroup>
+            </Grid.Col>
+          </Grid.Row>
+          
+          <Button 
+            variant="secondary"
+            onClick={handleAddComponent}
+            style={{ marginBottom: '20px' }}
+          >
+            {editingComponentIndex >= 0 ? 'Atualizar Componente' : 'Adicionar Componente'}
+          </Button>
+          
+          {editingIndex >= 0 && items[editingIndex].additionalComponents && items[editingIndex].additionalComponents.length > 0 ? (
+            <div>
+              <Typography variant="h3" style={{ marginTop: '24px', marginBottom: '16px' }}>
+                Componentes Adicionados:
+              </Typography>
+              
+              {items[editingIndex].additionalComponents.map((comp, idx) => (
+                <ItemCard key={idx}>
+                  <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                    {comp.ActiveIngredientName}
+                  </Typography>
+                  <Typography variant="body2">
+                    Concentração: {comp.ConcentrationValue} {comp.ConcentrationUnit}
+                  </Typography>
+                  <ItemActions>
+                    <Button 
+                      variant="text" 
+                      size="small" 
+                      onClick={() => handleEditComponent(idx)}
+                    >
+                      Editar
+                    </Button>
+                    <Button 
+                      variant="error" 
+                      size="small" 
+                      onClick={() => handleRemoveComponent(idx)}
+                    >
+                      Remover
+                    </Button>
+                  </ItemActions>
+                </ItemCard>
+              ))}
+            </div>
+          ) : (
+            <Typography variant="body2" style={{ fontStyle: 'italic' }}>
+              Nenhum componente adicional foi adicionado.
+            </Typography>
+          )}
+          
+          <Modal.Actions position="flex-end">
+            <Button variant="primary" onClick={handleComponentsModalClose}>
+              Concluído
             </Button>
           </Modal.Actions>
         </Modal>

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Typography, Card } from '../common';
+import { Typography } from '../common';
 import { formatDate } from '../../utils/dateUtils';
 
 const DetailSection = styled.div`
@@ -33,10 +33,50 @@ const DetailLabel = styled(Typography)`
   margin-bottom: ${props => props.theme.spacing.xs};
 `;
 
-const ItemCard = styled(Card)`
-  padding: ${props => props.theme.spacing.md};
-  margin-bottom: ${props => props.theme.spacing.md};
+const QuoteTable = styled.table`
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: ${props => props.theme.spacing.md};
   box-shadow: ${props => props.theme.shadows.sm};
+  border-radius: ${props => props.theme.borders.radius.md};
+  overflow: hidden;
+`;
+
+const TableHead = styled.thead`
+  background-color: ${props => props.theme.colors.primary};
+  color: white;
+  
+  th {
+    padding: ${props => props.theme.spacing.md};
+    text-align: left;
+    font-weight: ${props => props.theme.typography.fontWeights.medium};
+    
+    &:first-child {
+      border-top-left-radius: ${props => props.theme.borders.radius.sm};
+    }
+    
+    &:last-child {
+      border-top-right-radius: ${props => props.theme.borders.radius.sm};
+    }
+  }
+`;
+
+const TableRow = styled.tr`
+  border-bottom: 1px solid ${props => props.theme.colors.border};
+  
+  &.main-item {
+    background-color: ${props => props.theme.colors.surface};
+    font-weight: ${props => props.theme.typography.fontWeights.medium};
+  }
+  
+  &.additional-item {
+    background-color: white;
+  }
+  
+  td {
+    padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  }
 `;
 
 const PrescriptionImage = styled.img`
@@ -120,18 +160,47 @@ const QuoteDetails = ({ quote }) => {
 
       <DetailSection>
         <SectionTitle variant="h5">Itens da Cotação</SectionTitle>
-        {items && items.map(item => (
-          <ItemCard key={item.id}>
-            <DetailItem>
-              <DetailLabel variant="body2">Fórmula</DetailLabel>
-              <Typography>{item.formula}</Typography>
-            </DetailItem>
-            <DetailItem>
-              <DetailLabel variant="body2">Observação</DetailLabel>
-              <Typography>{item.observation}</Typography>
-            </DetailItem>
-          </ItemCard>
-        ))}
+        
+        <div style={{ overflowX: 'auto' }}>
+          <QuoteTable>
+            <TableHead>
+              <tr>
+                <th style={{ padding: '12px 16px', textAlign: 'left' }}>Composto</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left' }}>Forma</th>
+                <th style={{ padding: '12px 16px', textAlign: 'center' }}>Concentração</th>
+                <th style={{ padding: '12px 16px', textAlign: 'center' }}>Quantidade</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left' }}>Componentes Adicionais</th>
+                <th style={{ padding: '12px 16px', textAlign: 'left' }}>Observação</th>
+              </tr>
+            </TableHead>
+            <tbody>
+              {items && items.map(item => (
+                <React.Fragment key={item.id}>
+                  {/* Item Principal */}
+                  <TableRow className="main-item">
+                    <td style={{ fontWeight: 'bold' }}>{item.mainCompoundName}</td>
+                    <td>{item.pharmaceuticalForm}</td>
+                    <td style={{ textAlign: 'center' }}>
+                      {item.concentrationValue} {item.concentrationUnit}
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      {item.totalQuantity} {item.quantityUnit}
+                    </td>
+                    <td style={{ whiteSpace: 'pre-line' }}>
+                      {item.additionalComponents && item.additionalComponents.length > 0 
+                        ? item.additionalComponents.map(comp => 
+                            `${comp.concentrationValue} ${comp.concentrationUnit} x ${comp.activeIngredientName}`
+                          ).join('\r\n')
+                        : '-'
+                      }
+                    </td>
+                    <td>{item.observation || '-'}</td>
+                  </TableRow>
+                </React.Fragment>
+              ))}
+            </tbody>
+          </QuoteTable>
+        </div>
       </DetailSection>
 
       {prescriptionImageId && (
@@ -167,8 +236,19 @@ QuoteDetails.propTypes = {
     }).isRequired,
     items: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
-      formula: PropTypes.string.isRequired,
+      mainCompoundName: PropTypes.string.isRequired,
+      pharmaceuticalForm: PropTypes.string.isRequired,
+      concentrationValue: PropTypes.number.isRequired,
+      concentrationUnit: PropTypes.string.isRequired,
+      totalQuantity: PropTypes.number.isRequired,
+      quantityUnit: PropTypes.string.isRequired,
       observation: PropTypes.string,
+      additionalComponents: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        activeIngredientName: PropTypes.string.isRequired,
+        concentrationValue: PropTypes.number.isRequired,
+        concentrationUnit: PropTypes.string.isRequired,
+      })),
     })).isRequired,
     prescriptionImageId: PropTypes.number,
     image: PropTypes.string, // URL para a imagem

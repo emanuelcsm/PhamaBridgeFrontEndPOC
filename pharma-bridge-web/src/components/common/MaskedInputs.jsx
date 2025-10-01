@@ -1,5 +1,5 @@
 // MaskedInputs.jsx - Componentes de input especializados com máscaras
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import Input from './Input';
@@ -232,4 +232,162 @@ ZipCodeInput.propTypes = {
   required: PropTypes.bool
 };
 
-export { PhoneInput, ZipCodeInput };
+// ========================
+// Decimal Input Component
+// ========================
+
+const DecimalInput = ({ 
+  value, 
+  onChange, 
+  label = "Valor", 
+  error, 
+  helperText, 
+  required,
+  decimalPlaces = 2, 
+  min, 
+  max,
+  ...props 
+}) => {
+  const [inputValue, setInputValue] = useState(
+    value !== undefined && value !== null ? value.toString() : ''
+  );
+  const [isTouched, setIsTouched] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+  
+  const validateDecimal = useCallback((val) => {
+    // Verifica se é um número válido
+    if (val === '') return true;
+    
+    const numValue = parseFloat(val);
+    
+    if (isNaN(numValue)) {
+      setIsValid(false);
+      return false;
+    }
+    
+    // Valida mínimo e máximo se definidos
+    if (min !== undefined && numValue < min) {
+      setIsValid(false);
+      return false;
+    }
+    
+    if (max !== undefined && numValue > max) {
+      setIsValid(false);
+      return false;
+    }
+    
+    setIsValid(true);
+    return true;
+  }, [min, max, setIsValid]);
+  
+  // Effect to handle initial value from props
+  useEffect(() => {
+    if (value !== undefined && value !== null && value.toString() !== inputValue) {
+      setInputValue(value.toString());
+      validateDecimal(value.toString());
+    }
+  }, [value, inputValue, validateDecimal]);
+  
+  const formatDecimal = (val) => {
+    if (!val) return '';
+    
+    // Limita o número de casas decimais
+    const numValue = parseFloat(val);
+    if (isNaN(numValue)) return val;
+    
+    // Retorna com o número específico de casas decimais
+    return numValue.toLocaleString('pt-BR', {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces
+    });
+  };
+  
+  const handleChange = (e) => {
+    let val = e.target.value;
+    
+    // Permite apenas números, uma vírgula ou ponto como separador decimal
+    val = val.replace(/[^\d.,]/g, '');
+    
+    // Converte vírgula para ponto para processamento interno
+    val = val.replace(',', '.');
+    
+    // Limita a um único separador decimal
+    const parts = val.split('.');
+    if (parts.length > 2) {
+      val = parts[0] + '.' + parts.slice(1).join('');
+    }
+    
+    setInputValue(val);
+    setIsTouched(true);
+    
+    // Valida o valor
+    const isValidValue = validateDecimal(val);
+    
+    if (onChange && isValidValue) {
+      // Cria um evento sintético similar ao que o onChange espera
+      const syntheticEvent = {
+        target: {
+          name: e.target.name,
+          value: val === '' ? '' : parseFloat(val)
+        }
+      };
+      onChange(syntheticEvent);
+    }
+  };
+  
+  const handleBlur = () => {
+    setIsTouched(true);
+    
+    // Formata o valor ao perder o foco
+    if (inputValue) {
+      const numValue = parseFloat(inputValue);
+      if (!isNaN(numValue)) {
+        // Usando toLocaleString para formatar com vírgula como separador decimal
+        const formatted = formatDecimal(numValue);
+        setInputValue(formatted);
+      }
+    }
+  };
+  
+  const handleFocus = (e) => {
+    // Ao focar, seleciona todo o conteúdo para facilitar a edição
+    e.target.select();
+  };
+
+  // Determina se devemos mostrar o erro
+  const shouldShowError = (error || (isTouched && !isValid && inputValue !== ''));
+  const errorMessage = shouldShowError && !error ? 
+    `Valor inválido${min !== undefined ? `. Mínimo: ${min}` : ''}${max !== undefined ? `. Máximo: ${max}` : ''}` : helperText;
+
+  return (
+    <InputWrapper>
+      <Input
+        label={label}
+        value={inputValue}
+        onChange={handleChange}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
+        type="text"
+        placeholder={`0.${'0'.repeat(decimalPlaces)}`}
+        error={shouldShowError}
+        helperText={errorMessage}
+        required={required}
+        {...props}
+      />
+    </InputWrapper>
+  );
+};
+
+DecimalInput.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  onChange: PropTypes.func.isRequired,
+  label: PropTypes.string,
+  error: PropTypes.bool,
+  helperText: PropTypes.string,
+  required: PropTypes.bool,
+  decimalPlaces: PropTypes.number,
+  min: PropTypes.number,
+  max: PropTypes.number
+};
+
+export { PhoneInput, ZipCodeInput, DecimalInput };

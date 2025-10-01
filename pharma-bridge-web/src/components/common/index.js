@@ -14,7 +14,7 @@ import { Modal, Modal2 } from './Modal';
 import UserAvatar from './UserAvatar';
 import LogoImage from './LogoImage';
 import RegisterTypeModal from './RegisterTypeModal';
-import { PhoneInput, ZipCodeInput } from './MaskedInputs';
+import { PhoneInput, ZipCodeInput, DecimalInput } from './MaskedInputs';
 import UserNameDisplay from './UserNameDisplay';
 import { TabContainer, Tab } from './Tabs';
 
@@ -34,6 +34,7 @@ export {
   RegisterTypeModal,
   PhoneInput,
   ZipCodeInput,
+  DecimalInput,
   UserNameDisplay,
   TabContainer,
   Tab,
