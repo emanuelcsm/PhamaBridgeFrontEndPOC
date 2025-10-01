@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import api from '../../api/api';
-import { Typography, Card } from '../common';
+import { Typography, Card, Button } from '../common';
 import { formatDate } from '../../utils/dateUtils';
+import quoteService from '../../services/quoteService';
 
 // Cache para evitar chamadas duplicadas à API
 let pendingFetch = null;
@@ -52,6 +52,17 @@ const TableCell = styled.td`
   padding: ${props => props.theme.spacing.md};
 `;
 
+const FilterContainer = styled.div`
+  display: flex;
+  gap: ${props => props.theme.spacing.md};
+  margin-bottom: ${props => props.theme.spacing.md};
+  flex-wrap: wrap;
+`;
+
+const FilterButton = styled(Button)`
+  min-width: 100px;
+`;
+
 const LoadingContainer = styled.div`
   padding: ${props => props.theme.spacing.xl};
   text-align: center;
@@ -64,9 +75,10 @@ const NoDataContainer = styled.div`
 `;
 
 const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
-  const [pendingQuotes, setPendingQuotes] = useState([]);
+  const [quotes, setQuotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [statusFilter, setStatusFilter] = useState("Pending");
   const dataFetchedRef = useRef(false);
 
   // Função para formatar o endereço completo
@@ -90,91 +102,135 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
     return formattedAddress;
   };
 
+  // Função para buscar cotações
+  const fetchQuotes = async () => {
+    // Se já existe uma requisição em andamento, retorna ela
+    if (pendingFetch) {
+      return pendingFetch;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    console.log('Buscando cotações para farmácia com status:', statusFilter);
+    // Cria uma nova Promise e armazena para possível reuso
+    pendingFetch = quoteService.getPharmacyQuotes(statusFilter)
+      .then(data => {
+        setQuotes(data);
+        dataFetchedRef.current = true;
+        return data;
+      })
+      .catch(err => {
+        setError('Erro ao carregar cotações');
+        console.error('Erro ao carregar cotações:', err);
+        throw err;
+      })
+      .finally(() => {
+        setIsLoading(false);
+        // Limpa a referência após a conclusão
+        pendingFetch = null;
+      });
+    
+    return pendingFetch;
+  };
+
   useEffect(() => {
     // Se já buscamos dados e não há refresh, não faça nada
     if (dataFetchedRef.current && refreshTrigger === 0) {
       return;
     }
     
-    // Evita chamadas duplicadas reusando a Promise existente
-    const fetchData = async () => {
-      // Se já existe uma requisição em andamento, retorna ela
-      if (pendingFetch) {
-        return pendingFetch;
-      }
-      
-      setIsLoading(true);
-      setError(null);
-      
-      // Cria uma nova Promise e armazena para possível reuso
-      pendingFetch = api.get('/quote/listpending')
-        .then(response => {
-          setPendingQuotes(response.data);
-          dataFetchedRef.current = true;
-          return response;
-        })
-        .catch(err => {
-          setError('Erro ao carregar cotações pendentes');
-          console.error('Erro ao carregar cotações pendentes:', err);
-          throw err;
-        })
-        .finally(() => {
-          setIsLoading(false);
-          // Limpa a referência após a conclusão
-          pendingFetch = null;
-        });
-      
-      return pendingFetch;
-    };
-    
-    fetchData();
-  }, [refreshTrigger]);
-
-  if (isLoading) {
-    return (
-      <LoadingContainer>
-        <Typography variant="body1">Carregando cotações pendentes...</Typography>
-      </LoadingContainer>
-    );
-  }
-
-  if (error) {
-    return (
-      <NoDataContainer>
-        <Typography variant="body1" color="error">{error}</Typography>
-      </NoDataContainer>
-    );
-  }
-
-  if (!pendingQuotes || pendingQuotes.length === 0) {
-    return (
-      <NoDataContainer>
-        <Typography variant="body1">Nenhuma cotação pendente encontrada</Typography>
-      </NoDataContainer>
-    );
-  }
+    fetchQuotes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter, refreshTrigger]);
+  
+  // Função para lidar com cliques nos botões de filtro
+  const handleFilterClick = (filterValue) => {
+    dataFetchedRef.current = false;
+    pendingFetch = null;
+    setStatusFilter(filterValue);
+  };
 
   return (
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell>ID</TableHeaderCell>
-            <TableHeaderCell>Data de Criação</TableHeaderCell>
-            <TableHeaderCell>Endereço de Entrega</TableHeaderCell>
-          </TableRow>
-        </TableHead>
-        <tbody>
-          {pendingQuotes.map((quote) => (
-            <TableRow key={quote.id}>
-              <TableCell>{quote.id}</TableCell>
-              <TableCell>{formatDate(quote.createDate)}</TableCell>
-              <TableCell>{formatAddress(quote.deliveryAddress)}</TableCell>
-            </TableRow>
-          ))}
-        </tbody>
-      </Table>
-    </TableContainer>
+    <div>
+      <FilterContainer>
+        <FilterButton 
+          variant={statusFilter === "" ? "primary" : "secondary"} 
+          onClick={() => handleFilterClick("")}
+        >
+          Todos
+        </FilterButton>
+        <FilterButton 
+          variant={statusFilter === "Pending" ? "primary" : "secondary"} 
+          onClick={() => handleFilterClick("Pending")}
+        >
+          Pendentes
+        </FilterButton>
+        <FilterButton 
+          variant={statusFilter === "Accepted" ? "primary" : "secondary"} 
+          onClick={() => handleFilterClick("Accepted")}
+        >
+          Aceitas
+        </FilterButton>
+        <FilterButton 
+          variant={statusFilter === "Canceled" ? "primary" : "secondary"} 
+          onClick={() => handleFilterClick("Canceled")}
+        >
+          Canceladas
+        </FilterButton>
+      </FilterContainer>
+
+      {error && (
+        <Typography variant="body1" color="error">
+          {error}
+        </Typography>
+      )}
+
+      <TableContainer>
+        {isLoading ? (
+          <LoadingContainer>
+            <Typography variant="body1">Carregando cotações...</Typography>
+          </LoadingContainer>
+        ) : quotes.length > 0 ? (
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>ID</TableHeaderCell>
+                <TableHeaderCell>Data de Criação</TableHeaderCell>
+                <TableHeaderCell>Endereço de Entrega</TableHeaderCell>
+                <TableHeaderCell>Status</TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <tbody>
+              {quotes.map((quote) => (
+                <TableRow key={quote.id}>
+                  <TableCell>{quote.id}</TableCell>
+                  <TableCell>{formatDate(quote.createDate)}</TableCell>
+                  <TableCell>{formatAddress(quote.deliveryAddress)}</TableCell>
+                  <TableCell>
+                    {quote.status === 'Pending' && 'Pendente'}
+                    {quote.status === 'Accepted' && 'Aceita'}
+                    {quote.status === 'Canceled' && 'Cancelada'}
+                    {quote.status && !['Pending', 'Accepted', 'Canceled'].includes(quote.status) && 'Desconhecido'}
+                    {!quote.status && 'Indefinido'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <NoDataContainer>
+            <Typography variant="body1">
+              Nenhuma cotação {
+                statusFilter === "Pending" ? "pendente" :
+                statusFilter === "Accepted" ? "aceita" :
+                statusFilter === "Canceled" ? "cancelada" : ""
+              } encontrada
+            </Typography>
+          </NoDataContainer>
+        )}
+      </TableContainer>
+    </div>
   );
 };
 

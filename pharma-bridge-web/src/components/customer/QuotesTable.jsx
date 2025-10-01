@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import api from '../../api/api';
 import { Button, Typography, Card } from '../common';
+import { Modal } from '../common/Modal';
 import useConfirm from '../../hooks/useConfirm';
 import { useAlert } from '../../contexts/AlertContext';
 import { formatDate } from '../../utils/dateUtils';
+import quoteService from '../../services/quoteService';
+import QuoteDetails from './QuoteDetails';
 
 // Cache para evitar chamadas duplicadas à API
 let pendingFetch = null;
@@ -86,9 +88,44 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectedQuote, setSelectedQuote] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
   const { confirm, confirmDialog } = useConfirm();
   const { info } = useAlert();
   const dataFetchedRef = useRef(false);
+
+  // Função para buscar cotações
+  const fetchQuotes = async () => {
+    // Se já existe uma requisição em andamento, retorna ela
+    if (pendingFetch) {
+      return pendingFetch;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    console.log('Buscando cotações com status:', statusFilter);
+    // Cria uma nova Promise e armazena para possível reuso
+    pendingFetch = quoteService.getQuotes(statusFilter)
+      .then(data => {
+        setQuotes(data);
+        dataFetchedRef.current = true;
+        return data;
+      })
+      .catch(err => {
+        setError('Erro ao carregar cotações');
+        console.error('Erro ao carregar cotações:', err);
+        throw err;
+      })
+      .finally(() => {
+        setIsLoading(false);
+        // Limpa a referência após a conclusão
+        pendingFetch = null;
+      });
+    
+    return pendingFetch;
+  };
 
   useEffect(() => {
     // Se já buscamos dados e não há refresh, não faça nada
@@ -96,49 +133,24 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
       return;
     }
     
-    // Evita chamadas duplicadas reusando a Promise existente
-    const fetchData = async () => {
-      // Se já existe uma requisição em andamento, retorna ela
-      if (pendingFetch) {
-        return pendingFetch;
-      }
-      
-      setIsLoading(true);
-      setError(null);
-      
-      let url = '/quote/list';
-      if (statusFilter) {
-        url += `?status=${statusFilter}`;
-      }
-      
-      // Cria uma nova Promise e armazena para possível reuso
-      pendingFetch = api.get(url)
-        .then(response => {
-          setQuotes(response.data);
-          dataFetchedRef.current = true;
-          return response;
-        })
-        .catch(err => {
-          setError('Erro ao carregar cotações');
-          console.error('Erro ao carregar cotações:', err);
-          throw err;
-        })
-        .finally(() => {
-          setIsLoading(false);
-          // Limpa a referência após a conclusão
-          pendingFetch = null;
-        });
-      
-      return pendingFetch;
-    };
-    
-    fetchData();
+    fetchQuotes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, refreshTrigger]);
 
-  const handleShowDetails = (quoteId) => {
-    // Implementar lógica para exibir detalhes da cotação
-    info(`Detalhes da cotação ${quoteId}`);
+  const handleShowDetails = async (quoteId) => {
+    setLoadingDetails(true);
+    
+    try {
+      const quoteDetails = await quoteService.getQuoteDetails(quoteId);
+      setSelectedQuote(quoteDetails);
+      setDetailsModalOpen(true);
+    } catch (err) {
+      setError('Erro ao carregar detalhes da cotação');
+      info('Não foi possível carregar os detalhes da cotação. Por favor, tente novamente.');
+      console.error('Erro ao carregar detalhes da cotação:', err);
+    } finally {
+      setLoadingDetails(false);
+    }
   };
 
   const handleCancelQuote = async (quoteId) => {
@@ -154,11 +166,23 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
     if (confirmed) {
       setIsLoading(true);
       try {
-        await api.post(`/quote/${quoteId}/cancel`);
+        console.log('START: Cancelando cotação com ID:', quoteId);
+        // Esperar pela conclusão da requisição de cancelamento
+        await quoteService.cancelQuote(quoteId);
+        console.log('DONE: Cancelando cotação com ID:', quoteId);
+        
+        // Agora que temos certeza de que o cancelamento foi bem-sucedido,
+        // podemos atualizar a interface
+        console.log('Enviando trigger para atualização da lista:', quoteId);
+        
         // Resetar o cache para forçar nova busca
         dataFetchedRef.current = false;
-        // Forçar nova requisição atualizando o estado
-        setStatusFilter(prevFilter => prevFilter); // Isso vai disparar o efeito
+        pendingFetch = null;
+        
+        // Forçar uma nova busca de dados
+        await fetchQuotes();
+        
+        console.log('DONE: Enviando trigger para atualização da lista:', quoteId);
       } catch (err) {
         setError('Erro ao cancelar cotação');
         console.error('Erro ao cancelar cotação:', err);
@@ -168,30 +192,45 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
     }
   };
 
+  const closeDetailsModal = () => {
+    setDetailsModalOpen(false);
+    // Limpar a URL da imagem quando o modal for fechado para liberar memória
+    if (selectedQuote && selectedQuote.image) {
+      URL.revokeObjectURL(selectedQuote.image);
+    }
+    setSelectedQuote(null);
+  };
+
+  const handleFilterClick = (filterValue) => {
+    dataFetchedRef.current = false;
+    pendingFetch = null;
+    setStatusFilter(filterValue);
+  };
+
   return (
     <div>
       <FilterContainer>
         <FilterButton 
           variant={statusFilter === "" ? "primary" : "secondary"} 
-          onClick={() => setStatusFilter("")}
+          onClick={() => handleFilterClick("")}
         >
           Todos
         </FilterButton>
         <FilterButton 
           variant={statusFilter === "Pending" ? "primary" : "secondary"} 
-          onClick={() => setStatusFilter("Pending")}
+          onClick={() => handleFilterClick("Pending")}
         >
           Pendentes
         </FilterButton>
         <FilterButton 
           variant={statusFilter === "Accepted" ? "primary" : "secondary"} 
-          onClick={() => setStatusFilter("Accepted")}
+          onClick={() => handleFilterClick("Accepted")}
         >
           Aceitas
         </FilterButton>
         <FilterButton 
           variant={statusFilter === "Canceled" ? "primary" : "secondary"} 
-          onClick={() => setStatusFilter("Canceled")}
+          onClick={() => handleFilterClick("Canceled")}
         >
           Canceladas
         </FilterButton>
@@ -236,8 +275,9 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
                         variant="secondary"
                         size="small"
                         onClick={() => handleShowDetails(quote.id)}
+                        disabled={loadingDetails}
                       >
-                        Detalhes
+                        {loadingDetails && quote.id === selectedQuote?.id ? 'Carregando...' : 'Detalhes'}
                       </Button>
                       {quote.status === 'Pending' && (
                         <Button
@@ -262,6 +302,20 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
           </NoDataContainer>
         )}
       </TableContainer>
+      
+      <Modal
+        isOpen={detailsModalOpen}
+        onClose={closeDetailsModal}
+        title={`Cotação #${selectedQuote?.id || ''}`}
+        size="lg"
+      >
+        {selectedQuote ? (
+          <QuoteDetails quote={selectedQuote} />
+        ) : (
+          <Typography>Carregando detalhes...</Typography>
+        )}
+      </Modal>
+
       {confirmDialog}
     </div>
   );
