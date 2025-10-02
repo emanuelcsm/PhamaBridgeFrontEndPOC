@@ -17,6 +17,7 @@ import {
   Logo
 } from '../../components/styled';
 import PendingQuotesTable from '../../components/pharmacy/PendingQuotesTable';
+import OrdersTable from '../../components/pharmacy/OrdersTable';
 
 const MainPagePharmacy = () => {
   const { user } = useAuth();
@@ -66,19 +67,22 @@ const MainPagePharmacy = () => {
           
           {hasRole(managerAdminRoles) && (
             <Tab label="Cotações Respondidas">
-              {/* Conteúdo para Cotações Respondidas ficará aqui */}
+              <Typography variant="h5" style={{ marginBottom: '16px' }}>Cotações Respondidas</Typography>
+              <OrdersTable status="Pending" />
             </Tab>
           )}
           
           {hasRole(productionRoles) && (
             <Tab label="Pedidos">
-              {/* Conteúdo para Pedidos ficará aqui */}
+              <Typography variant="h5" style={{ marginBottom: '16px' }}>Pedidos Aprovados</Typography>
+              <OrdersTable status="Approved" />
             </Tab>
           )}
           
           {hasRole(deliveryRoles) && (
             <Tab label="Entregas Pendentes">
-              {/* Conteúdo para Entregas Pendentes ficará aqui */}
+              <Typography variant="h5" style={{ marginBottom: '16px' }}>Entregas Pendentes</Typography>
+              <OrdersTable status="Ready" />
             </Tab>
           )}
         </TabContainer>

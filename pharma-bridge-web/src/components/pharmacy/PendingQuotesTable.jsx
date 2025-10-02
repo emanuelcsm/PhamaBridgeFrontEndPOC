@@ -155,7 +155,6 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
                 <TableHeaderCell>ID</TableHeaderCell>
                 <TableHeaderCell>Data de Criação</TableHeaderCell>
                 <TableHeaderCell>Endereço de Entrega</TableHeaderCell>
-                <TableHeaderCell>Status</TableHeaderCell>
                 <TableHeaderCell>Ações</TableHeaderCell>
               </TableRow>
             </TableHead>
@@ -165,13 +164,6 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
                   <TableCell>{quote.id}</TableCell>
                   <TableCell>{formatDate(quote.createDate)}</TableCell>
                   <TableCell>{formatAddress(quote.deliveryAddress)}</TableCell>
-                  <TableCell>
-                    {quote.status === 'Pending' && 'Pendente'}
-                    {quote.status === 'Accepted' && 'Aceita'}
-                    {quote.status === 'Canceled' && 'Cancelada'}
-                    {quote.status && !['Pending', 'Accepted', 'Canceled'].includes(quote.status) && 'Desconhecido'}
-                    {!quote.status && 'Indefinido'}
-                  </TableCell>
                   <TableCell>
                     <Button
                       variant="primary"
