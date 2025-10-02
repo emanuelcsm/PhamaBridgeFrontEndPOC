@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Typography, Card, Button } from '../common';
 import { formatDate } from '../../utils/dateUtils';
 import quoteService from '../../services/quoteService';
+import { useNavigate } from 'react-router-dom';
 
 // Cache para evitar chamadas duplicadas à API
 let pendingFetch = null;
@@ -69,6 +70,7 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("Pending");
   const dataFetchedRef = useRef(false);
+  const navigate = useNavigate();
 
   // Função para formatar o endereço completo
   const formatAddress = (address) => {
@@ -154,6 +156,7 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
                 <TableHeaderCell>Data de Criação</TableHeaderCell>
                 <TableHeaderCell>Endereço de Entrega</TableHeaderCell>
                 <TableHeaderCell>Status</TableHeaderCell>
+                <TableHeaderCell>Ações</TableHeaderCell>
               </TableRow>
             </TableHead>
             <tbody>
@@ -168,6 +171,15 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
                     {quote.status === 'Canceled' && 'Cancelada'}
                     {quote.status && !['Pending', 'Accepted', 'Canceled'].includes(quote.status) && 'Desconhecido'}
                     {!quote.status && 'Indefinido'}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="primary"
+                      size="small"
+                      onClick={() => navigate(`/pharmacy/orders/create/${quote.id}`)}
+                    >
+                      Criar ordem
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

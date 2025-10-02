@@ -3,6 +3,9 @@ import api from '../api/api';
 /**
  * Serviço para gerenciar operações relacionadas a cotações
  */
+// Cache simples para armazenar resultados de requisições
+const cache = {};
+
 const quoteService = {
   /**
    * Busca a lista de cotações do usuário atual
@@ -37,8 +40,15 @@ const quoteService = {
    * @returns {Promise<Object>} - Detalhes da cotação com URL da imagem
    */
   getQuoteDetails: async (quoteId) => {
+    // Chave de cache única para esta cotação
+    const cacheKey = `quote_${quoteId}`;
+    
+    // Verifica se já temos os detalhes em cache
+    if (cache[cacheKey]) {
+      return cache[cacheKey];
+    }
+    
     try {
-      // Busca os detalhes da cotação
       const quoteResponse = await api.get(`/quote/${quoteId}`);
       const quoteData = quoteResponse.data;
       
@@ -51,24 +61,30 @@ const quoteService = {
           // Cria uma URL para o blob
           const imageUrl = URL.createObjectURL(imageBlob);
           
-          // Retorna os dados da cotação com a URL da imagem
-          return {
+          const result = {
             ...quoteData,
             image: imageUrl
           };
+          
+          // Guarda no cache
+          cache[cacheKey] = result;
+          return result;
         } catch (imageError) {
           console.error('Erro ao buscar imagem da prescrição:', imageError);
-          // Retorna os dados da cotação sem a imagem
+          // Guarda no cache
+          cache[cacheKey] = quoteData;
           return quoteData;
         }
       }
       
+      // Guarda no cache
+      cache[cacheKey] = quoteData;
       return quoteData;
     } catch (error) {
       console.error('Erro ao buscar detalhes da cotação:', error);
       throw error;
     }
-  },
+},
   
   /**
    * Cancela uma cotação específica

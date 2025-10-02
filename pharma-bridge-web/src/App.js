@@ -13,6 +13,7 @@ import MainPagePharmacy from './pages/pharmacy/MainPagePharmacy';
 import RegisterPharmacyPage from './pages/pharmacy/RegisterPharmacyPage';
 import RegisterCustomerPage from './pages/customer/RegisterCustomerPage';
 import { ForgotPasswordPage, ResetPasswordPage } from './pages/auth';
+import CreateOrder from './pages/pharmacy/orders/CreateOrder';
 
 function App() {
   return (
@@ -34,6 +35,9 @@ function App() {
             {/* Rotas protegidas para farmácias */}
             <Route path="/pharmacy/home" element={<ProtectedRoute requiresAuth={true} requiredRole="PharmacyUser" />}>
               <Route index element={<MainPagePharmacy />} />
+            </Route>
+            <Route path="/pharmacy/orders/create/:quoteId" element={<ProtectedRoute requiresAuth={true} requiredRole="PharmacyUser" />}>
+              <Route index element={<CreateOrder />} />
             </Route>
             
             {/* Página de segurança (acessível para qualquer usuário autenticado) */}
