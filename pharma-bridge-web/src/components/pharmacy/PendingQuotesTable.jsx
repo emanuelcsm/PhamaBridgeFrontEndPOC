@@ -52,17 +52,6 @@ const TableCell = styled.td`
   padding: ${props => props.theme.spacing.md};
 `;
 
-const FilterContainer = styled.div`
-  display: flex;
-  gap: ${props => props.theme.spacing.md};
-  margin-bottom: ${props => props.theme.spacing.md};
-  flex-wrap: wrap;
-`;
-
-const FilterButton = styled(Button)`
-  min-width: 100px;
-`;
-
 const LoadingContainer = styled.div`
   padding: ${props => props.theme.spacing.xl};
   text-align: center;
@@ -114,7 +103,7 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
     
     console.log('Buscando cotações para farmácia com status:', statusFilter);
     // Cria uma nova Promise e armazena para possível reuso
-    pendingFetch = quoteService.getPharmacyQuotes(statusFilter)
+    pendingFetch = quoteService.getPharmacyQuotes()
       .then(data => {
         setQuotes(data);
         dataFetchedRef.current = true;
@@ -143,43 +132,9 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
     fetchQuotes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, refreshTrigger]);
-  
-  // Função para lidar com cliques nos botões de filtro
-  const handleFilterClick = (filterValue) => {
-    dataFetchedRef.current = false;
-    pendingFetch = null;
-    setStatusFilter(filterValue);
-  };
 
   return (
     <div>
-      <FilterContainer>
-        <FilterButton 
-          variant={statusFilter === "" ? "primary" : "secondary"} 
-          onClick={() => handleFilterClick("")}
-        >
-          Todos
-        </FilterButton>
-        <FilterButton 
-          variant={statusFilter === "Pending" ? "primary" : "secondary"} 
-          onClick={() => handleFilterClick("Pending")}
-        >
-          Pendentes
-        </FilterButton>
-        <FilterButton 
-          variant={statusFilter === "Accepted" ? "primary" : "secondary"} 
-          onClick={() => handleFilterClick("Accepted")}
-        >
-          Aceitas
-        </FilterButton>
-        <FilterButton 
-          variant={statusFilter === "Canceled" ? "primary" : "secondary"} 
-          onClick={() => handleFilterClick("Canceled")}
-        >
-          Canceladas
-        </FilterButton>
-      </FilterContainer>
-
       {error && (
         <Typography variant="body1" color="error">
           {error}
@@ -221,11 +176,7 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
         ) : (
           <NoDataContainer>
             <Typography variant="body1">
-              Nenhuma cotação {
-                statusFilter === "Pending" ? "pendente" :
-                statusFilter === "Accepted" ? "aceita" :
-                statusFilter === "Canceled" ? "cancelada" : ""
-              } encontrada
+              Nenhuma cotação encontrada
             </Typography>
           </NoDataContainer>
         )}

@@ -24,11 +24,8 @@ const quoteService = {
    * @param {string} status - Filtro de status opcional
    * @returns {Promise<Array>} - Lista de cotações para a farmácia
    */
-  getPharmacyQuotes: async (status = "") => {
-    let url = status === "Pending" ? '/quote/listpending' : '/quote/pharmacy/list';
-    if (status && status !== "Pending") {
-      url += `?status=${status}`;
-    }
+  getPharmacyQuotes: async () => {
+    let url = '/quote/listpending';
     
     const response = await api.get(url);
     return response.data;

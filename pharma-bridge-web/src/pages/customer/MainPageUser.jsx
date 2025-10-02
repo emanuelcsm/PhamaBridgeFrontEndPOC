@@ -180,8 +180,13 @@ const MainPageUser = () => {
   };
 
   const handleEditItem = (index) => {
-    setCurrentItem(items[index]);
-    setEditingIndex(index);
+    if (index >= 0 && index < items.length) {
+      setCurrentItem({
+        ...items[index],
+        additionalComponents: items[index].additionalComponents || []
+      });
+      setEditingIndex(index);
+    }
   };
 
   const handleRemoveItem = (index) => {
@@ -200,11 +205,11 @@ const MainPageUser = () => {
   };
 
   const handleAddComponent = () => {
-    if (currentComponent.ActiveIngredientName.trim()) {
+    if (currentComponent.ActiveIngredientName && currentComponent.ActiveIngredientName.trim() && editingIndex >= 0 && items[editingIndex]) {
       if (editingComponentIndex >= 0) {
         // Edição de um componente existente
         const updatedItems = [...items];
-        const itemComponents = [...updatedItems[editingIndex].additionalComponents];
+        const itemComponents = updatedItems[editingIndex].additionalComponents ? [...updatedItems[editingIndex].additionalComponents] : [];
         itemComponents[editingComponentIndex] = { ...currentComponent };
         updatedItems[editingIndex] = {
           ...updatedItems[editingIndex],
@@ -215,7 +220,8 @@ const MainPageUser = () => {
       } else {
         // Adição de novo componente
         const updatedItems = [...items];
-        const itemComponents = updatedItems[editingIndex].additionalComponents || [];
+        const itemComponents = updatedItems[editingIndex] && updatedItems[editingIndex].additionalComponents ? 
+          updatedItems[editingIndex].additionalComponents : [];
         updatedItems[editingIndex] = {
           ...updatedItems[editingIndex],
           additionalComponents: [...itemComponents, { ...currentComponent }]
@@ -267,6 +273,7 @@ const MainPageUser = () => {
   const handleItemsContinue = () => {
     setItemsModalOpen(false);
     setAddressModalOpen(true);
+    setEditingIndex(-1);
   };
 
   // Handlers para o endereço
@@ -279,6 +286,7 @@ const MainPageUser = () => {
     setIsLoading(true);
     
     try {
+      console.log('Construindo formData');
       const formData = new FormData();
       
       // Adiciona os itens da receita conforme novo esquema
@@ -319,33 +327,39 @@ const MainPageUser = () => {
       formData.append('RegistrationNumber', '123456');
       formData.append('RegistrationState', 'SP');
       
+      console.log('Enviando cotação');
       // Envia a requisição
       await api.post('/quote/create', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      try {
+        console.log('Cotação enviada com sucesso');
       
-      // Reset dos estados após sucesso
-      setAddressModalOpen(false);
-      setPrescriptionFile(null);
-      setItems([]);
-      setAddress({
-        street: '',
-        number: '',
-        complement: '',
-        neighborhood: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        phoneNumber: ''
-      });
-      
-      // Atualiza a tabela de cotações
-      setRefreshQuotes(prev => prev + 1);
-      
-      // Exibe uma mensagem de sucesso usando o componente de alerta
-      success('Cotação enviada com sucesso!');
+        // Reset dos estados após sucesso
+        setAddressModalOpen(false);
+        setPrescriptionFile(null);
+        setItems([]);
+        setAddress({
+          street: '',
+          number: '',
+          complement: '',
+          neighborhood: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          phoneNumber: ''
+        });
+        
+        // Atualiza a tabela de cotações
+        setRefreshQuotes(prev => prev + 1);
+        
+        // Exibe uma mensagem de sucesso usando o componente de alerta
+        success('Cotação enviada com sucesso!');
+      } catch (err) {
+        console.log('Erro ao processar sucesso da cotação', err);
+      }
     } catch (err) {
       console.error('Erro ao enviar cotação:', err);
       error('Erro ao enviar cotação. Tente novamente.');
@@ -718,13 +732,13 @@ const MainPageUser = () => {
             {editingComponentIndex >= 0 ? 'Atualizar Componente' : 'Adicionar Componente'}
           </Button>
           
-          {editingIndex >= 0 && items[editingIndex].additionalComponents && items[editingIndex].additionalComponents.length > 0 ? (
+          {editingIndex >= 0 && items[editingIndex] && items[editingIndex].additionalComponents && items[editingIndex].additionalComponents.length > 0 ? (
             <div>
               <Typography variant="h3" style={{ marginTop: '24px', marginBottom: '16px' }}>
                 Componentes Adicionados:
               </Typography>
               
-              {items[editingIndex].additionalComponents.map((comp, idx) => (
+              {items[editingIndex] && items[editingIndex].additionalComponents && items[editingIndex].additionalComponents.map((comp, idx) => (
                 <ItemCard key={idx}>
                   <Typography variant="body1" style={{ fontWeight: 'bold' }}>
                     {comp.ActiveIngredientName}
