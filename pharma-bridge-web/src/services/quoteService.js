@@ -43,8 +43,14 @@ const quoteService = {
     // Chave de cache única para esta cotação
     const cacheKey = `quote_${quoteId}`;
     
-    // Verifica se já temos os detalhes em cache
-    if (cache[cacheKey]) {
+    // Verifica se já temos os detalhes em cache e se a entrada é válida
+    // Uma entrada de cache é válida se não tiver uma imagem prescriptionImageId
+    // ou se tiver tanto prescriptionImageId quanto image
+    if (
+      cache[cacheKey] && 
+      (!cache[cacheKey].prescriptionImageId || 
+       (cache[cacheKey].prescriptionImageId && cache[cacheKey].image))
+    ) {
       return cache[cacheKey];
     }
     
@@ -94,6 +100,17 @@ const quoteService = {
   cancelQuote: async (quoteId) => {
     const response = await api.post(`/quote/${quoteId}/cancel`);
     return response.data;
+  },
+
+  /**
+   * Limpa o cache para uma cotação específica
+   * @param {number} quoteId - ID da cotação
+   */
+  clearQuoteCache: (quoteId) => {
+    const cacheKey = `quote_${quoteId}`;
+    if (cache[cacheKey]) {
+      delete cache[cacheKey];
+    }
   }
 };
 

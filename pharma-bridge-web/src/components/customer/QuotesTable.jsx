@@ -194,10 +194,18 @@ const QuotesTable = ({ refreshTrigger = 0 }) => {
 
   const closeDetailsModal = () => {
     setDetailsModalOpen(false);
+    
     // Limpar a URL da imagem quando o modal for fechado para liberar memória
-    if (selectedQuote && selectedQuote.image) {
-      URL.revokeObjectURL(selectedQuote.image);
+    if (selectedQuote) {
+      // Limpar o cache da cotação para forçar uma nova busca na próxima abertura
+      quoteService.clearQuoteCache(selectedQuote.id);
+      
+      // Revogar a URL do blob para liberar memória
+      if (selectedQuote.image) {
+        URL.revokeObjectURL(selectedQuote.image);
+      }
     }
+    
     setSelectedQuote(null);
   };
 
