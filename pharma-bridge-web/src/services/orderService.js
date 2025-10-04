@@ -49,6 +49,16 @@ const orderService = {
     }
   },
   
+  getOrdersByUser: async () => {
+    try {
+      const response = await api.get('/order/get-orders-by-user');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching orders by user:', error);
+      throw error;
+    }
+  },
+  
   getOrderDetails: async (orderId) => {
     try {
       const response = await api.get(`/order/${orderId}`);
@@ -76,7 +86,7 @@ const orderService = {
    */
   listOrders: async (status = null) => {
     try {
-      let url = '/order/my-orders';
+      let url = "/order/get-orders-by-pharmacy";
       if (status !== null && status !== '') {
         url += `?status=${status}`;
       }

@@ -74,6 +74,10 @@ const TableRow = styled.tr`
     background-color: white;
   }
   
+  tbody &:hover {
+    background-color: ${props => props.theme.colors.border};
+  }
+  
   td {
     padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   }

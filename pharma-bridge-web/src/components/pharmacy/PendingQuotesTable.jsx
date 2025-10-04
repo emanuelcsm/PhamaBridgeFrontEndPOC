@@ -40,7 +40,7 @@ const TableRow = styled.tr`
     background-color: ${props => props.theme.colors.surface};
   }
   
-  &:hover {
+  tbody &:hover {
     background-color: ${props => props.theme.colors.border};
   }
 `;

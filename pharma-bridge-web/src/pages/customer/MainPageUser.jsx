@@ -29,6 +29,7 @@ import {
   FormGroup
 } from '../../components/styled';
 import QuotesTable from '../../components/customer/QuotesTable';
+import OrdersTable from '../../components/customer/OrdersTable';
 
 // Componentes estilizados adicionais
 const QuoteButton = styled(Button)`
@@ -116,6 +117,7 @@ const MainPageUser = () => {
     ConcentrationUnit: 'mg'
   });
   const [editingIndex, setEditingIndex] = useState(-1);
+  const [managingComponentsIndex, setManagingComponentsIndex] = useState(-1); // New state for components management
   const [editingComponentIndex, setEditingComponentIndex] = useState(-1);
   const [refreshQuotes, setRefreshQuotes] = useState(0);
   const [address, setAddress] = useState({
@@ -186,6 +188,8 @@ const MainPageUser = () => {
         additionalComponents: items[index].additionalComponents || []
       });
       setEditingIndex(index);
+      // Reset managing components index when editing
+      setManagingComponentsIndex(-1);
     }
   };
 
@@ -200,19 +204,21 @@ const MainPageUser = () => {
   };
 
   const handleOpenComponentModal = (itemIndex) => {
-    setEditingIndex(itemIndex);
+    setManagingComponentsIndex(itemIndex); // Use the new state variable
     setComponentModalOpen(true);
   };
 
   const handleAddComponent = () => {
-    if (currentComponent.ActiveIngredientName && currentComponent.ActiveIngredientName.trim() && editingIndex >= 0 && items[editingIndex]) {
+    const activeIndex = managingComponentsIndex >= 0 ? managingComponentsIndex : editingIndex;
+    
+    if (currentComponent.ActiveIngredientName && currentComponent.ActiveIngredientName.trim() && activeIndex >= 0 && items[activeIndex]) {
       if (editingComponentIndex >= 0) {
         // Edição de um componente existente
         const updatedItems = [...items];
-        const itemComponents = updatedItems[editingIndex].additionalComponents ? [...updatedItems[editingIndex].additionalComponents] : [];
+        const itemComponents = updatedItems[activeIndex].additionalComponents ? [...updatedItems[activeIndex].additionalComponents] : [];
         itemComponents[editingComponentIndex] = { ...currentComponent };
-        updatedItems[editingIndex] = {
-          ...updatedItems[editingIndex],
+        updatedItems[activeIndex] = {
+          ...updatedItems[activeIndex],
           additionalComponents: itemComponents
         };
         setItems(updatedItems);
@@ -220,10 +226,10 @@ const MainPageUser = () => {
       } else {
         // Adição de novo componente
         const updatedItems = [...items];
-        const itemComponents = updatedItems[editingIndex] && updatedItems[editingIndex].additionalComponents ? 
-          updatedItems[editingIndex].additionalComponents : [];
-        updatedItems[editingIndex] = {
-          ...updatedItems[editingIndex],
+        const itemComponents = updatedItems[activeIndex] && updatedItems[activeIndex].additionalComponents ? 
+          updatedItems[activeIndex].additionalComponents : [];
+        updatedItems[activeIndex] = {
+          ...updatedItems[activeIndex],
           additionalComponents: [...itemComponents, { ...currentComponent }]
         };
         setItems(updatedItems);
@@ -239,21 +245,25 @@ const MainPageUser = () => {
   };
 
   const handleEditComponent = (componentIndex) => {
-    if (items[editingIndex] && items[editingIndex].additionalComponents) {
-      const component = items[editingIndex].additionalComponents[componentIndex];
+    const activeIndex = managingComponentsIndex >= 0 ? managingComponentsIndex : editingIndex;
+    
+    if (items[activeIndex] && items[activeIndex].additionalComponents) {
+      const component = items[activeIndex].additionalComponents[componentIndex];
       setCurrentComponent({ ...component });
       setEditingComponentIndex(componentIndex);
     }
   };
 
   const handleRemoveComponent = (componentIndex) => {
-    if (items[editingIndex] && items[editingIndex].additionalComponents) {
+    const activeIndex = managingComponentsIndex >= 0 ? managingComponentsIndex : editingIndex;
+    
+    if (items[activeIndex] && items[activeIndex].additionalComponents) {
       const updatedItems = [...items];
-      const updatedComponents = updatedItems[editingIndex].additionalComponents.filter(
+      const updatedComponents = updatedItems[activeIndex].additionalComponents.filter(
         (_, i) => i !== componentIndex
       );
-      updatedItems[editingIndex] = {
-        ...updatedItems[editingIndex],
+      updatedItems[activeIndex] = {
+        ...updatedItems[activeIndex],
         additionalComponents: updatedComponents
       };
       setItems(updatedItems);
@@ -268,6 +278,7 @@ const MainPageUser = () => {
       ConcentrationUnit: 'mg'
     });
     setEditingComponentIndex(-1);
+    // Keep the editingIndex unchanged when closing component modal
   };
 
   const handleItemsContinue = () => {
@@ -432,9 +443,7 @@ const MainPageUser = () => {
               <QuotesTable refreshTrigger={refreshQuotes} />
             </Tab>
             <Tab label="Pedidos">
-              <Typography variant="body1" style={{ padding: '20px 0' }}>
-                Aqui serão exibidos seus pedidos em andamento.
-              </Typography>
+              <OrdersTable />
             </Tab>
           </TabContainer>
         </Section>
@@ -576,28 +585,13 @@ const MainPageUser = () => {
             />
           </FormGroup>
           
-          <Grid.Row>
-            <Grid.Col size={6}>
-              <Button 
-                variant="secondary"
-                onClick={handleAddItem}
-                fullWidth
-              >
-                {editingIndex >= 0 ? 'Atualizar Item' : 'Adicionar Item'}
-              </Button>
-            </Grid.Col>
-            {editingIndex >= 0 && (
-              <Grid.Col size={6}>
-                <Button 
-                  variant="primary"
-                  onClick={() => setComponentModalOpen(true)}
-                  fullWidth
-                >
-                  Gerenciar Componentes Adicionais
-                </Button>
-              </Grid.Col>
-            )}
-          </Grid.Row>
+          <Button 
+            variant="secondary"
+            onClick={handleAddItem}
+            fullWidth
+          >
+            {editingIndex >= 0 ? 'Atualizar Item' : 'Adicionar Item'}
+          </Button>
           
           {items.length > 0 && (
             <ItemsList>
@@ -640,15 +634,13 @@ const MainPageUser = () => {
                     >
                       Editar
                     </Button>
-                    {item.additionalComponents && (
-                      <Button 
-                        variant="secondary" 
-                        size="small" 
-                        onClick={() => handleOpenComponentModal(index)}
-                      >
-                        Componentes
-                      </Button>
-                    )}
+                    <Button 
+                      variant="secondary" 
+                      size="small" 
+                      onClick={() => handleOpenComponentModal(index)}
+                    >
+                      Componentes
+                    </Button>
                     <Button 
                       variant="error" 
                       size="small" 
@@ -732,44 +724,51 @@ const MainPageUser = () => {
             {editingComponentIndex >= 0 ? 'Atualizar Componente' : 'Adicionar Componente'}
           </Button>
           
-          {editingIndex >= 0 && items[editingIndex] && items[editingIndex].additionalComponents && items[editingIndex].additionalComponents.length > 0 ? (
-            <div>
-              <Typography variant="h3" style={{ marginTop: '24px', marginBottom: '16px' }}>
-                Componentes Adicionados:
+          {/* Use the active index to display components */}
+          {(() => {
+            const activeIndex = managingComponentsIndex >= 0 ? managingComponentsIndex : editingIndex;
+            return activeIndex >= 0 && 
+              items[activeIndex] && 
+              items[activeIndex].additionalComponents && 
+              items[activeIndex].additionalComponents.length > 0 ? (
+              <div>
+                <Typography variant="h3" style={{ marginTop: '24px', marginBottom: '16px' }}>
+                  Componentes Adicionados:
+                </Typography>
+                
+                {items[activeIndex].additionalComponents.map((comp, idx) => (
+                  <ItemCard key={idx}>
+                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                      {comp.ActiveIngredientName}
+                    </Typography>
+                    <Typography variant="body2">
+                      Concentração: {comp.ConcentrationValue} {comp.ConcentrationUnit}
+                    </Typography>
+                    <ItemActions>
+                      <Button 
+                        variant="text" 
+                        size="small" 
+                        onClick={() => handleEditComponent(idx)}
+                      >
+                        Editar
+                      </Button>
+                      <Button 
+                        variant="error" 
+                        size="small" 
+                        onClick={() => handleRemoveComponent(idx)}
+                      >
+                        Remover
+                      </Button>
+                    </ItemActions>
+                  </ItemCard>
+                ))}
+              </div>
+            ) : (
+              <Typography variant="body2" style={{ fontStyle: 'italic' }}>
+                Nenhum componente adicional foi adicionado.
               </Typography>
-              
-              {items[editingIndex] && items[editingIndex].additionalComponents && items[editingIndex].additionalComponents.map((comp, idx) => (
-                <ItemCard key={idx}>
-                  <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                    {comp.ActiveIngredientName}
-                  </Typography>
-                  <Typography variant="body2">
-                    Concentração: {comp.ConcentrationValue} {comp.ConcentrationUnit}
-                  </Typography>
-                  <ItemActions>
-                    <Button 
-                      variant="text" 
-                      size="small" 
-                      onClick={() => handleEditComponent(idx)}
-                    >
-                      Editar
-                    </Button>
-                    <Button 
-                      variant="error" 
-                      size="small" 
-                      onClick={() => handleRemoveComponent(idx)}
-                    >
-                      Remover
-                    </Button>
-                  </ItemActions>
-                </ItemCard>
-              ))}
-            </div>
-          ) : (
-            <Typography variant="body2" style={{ fontStyle: 'italic' }}>
-              Nenhum componente adicional foi adicionado.
-            </Typography>
-          )}
+            );
+          })()}
           
           <Modal.Actions position="flex-end">
             <Button variant="primary" onClick={handleComponentsModalClose}>
