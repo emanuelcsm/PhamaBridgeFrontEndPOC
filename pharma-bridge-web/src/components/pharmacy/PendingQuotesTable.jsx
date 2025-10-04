@@ -68,7 +68,6 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
   const [quotes, setQuotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [statusFilter, setStatusFilter] = useState("Pending");
   const dataFetchedRef = useRef(false);
   const navigate = useNavigate();
 
@@ -103,7 +102,6 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
     setIsLoading(true);
     setError(null);
     
-    console.log('Buscando cotações para farmácia com status:', statusFilter);
     // Cria uma nova Promise e armazena para possível reuso
     pendingFetch = quoteService.getPharmacyQuotes()
       .then(data => {
@@ -133,7 +131,7 @@ const PendingQuotesTable = ({ refreshTrigger = 0 }) => {
     
     fetchQuotes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter, refreshTrigger]);
+  }, [refreshTrigger]);
 
   return (
     <div>
